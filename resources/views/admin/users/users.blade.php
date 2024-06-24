@@ -84,11 +84,7 @@
 
             <div class="container">
               <div class="page-inner">
-                <div
-                  class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
-                >
-               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Ajouter Vendeur</button>
-                </div>
+                <h2>Liste Utilisateurs</h2>
                 <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                     <table class="table table-head-bg-warning mt-4">
                         <thead>
@@ -96,22 +92,29 @@
                             <th scope="col">#</th>
                             <th scope="col">Nom</th>
                             <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Etat</th>
                             <th scope="col">Action</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($vendeurs as $index => $v)
+                        @foreach ($users as $index => $u)
 
                         <tr>
                             <td>{{ $index+1 }}</td>
-                            <td>{{ $v->user->name }}</td>
-                            <td>{{ $v->user->email }}</td>
+                            <td>{{ $u->name }}</td>
+                            <td>{{ $u->email }}</td>
+                            <td>{{ $u->role }}</td>
+                            <td>
+                                <span class="badge {{ $u->state == 'NonActif' ? 'badge-danger' : ($u->state == 'Actif' ? 'badge-success' : '') }} ">{{ $u->state }}</span>
+                            </td>
+
                             <td>
                                 <div class="d-flex">
-                                <a data-bs-toggle="modal" data-bs-target="#editArticle{{ $v->user_id }}" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task">
+                                <a data-bs-toggle="modal" data-bs-target="#editUser{{ $u->id }}" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task">
                                     <i class="fa fa-edit"></i>
                                 </a>
-                                <a onclick="return confirm('Voulez-vous vraiment supprimer cet article?')" href="#" class="btn btn-link btn-danger">
+                                <a onclick="return confirm('Voulez-vous vraiment supprimer le compte de cet utilisateur?')" href="{{ route('users.delete', ['id' => $u->id]) }}" class="btn btn-link btn-danger">
                                     <i class="fa fa-times"></i>
                                 <a>
                                 </div>
@@ -156,51 +159,82 @@
         </div>
 
 
-          <!-- Modal Ajout -->
-          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="exampleModalLabel">Ajouter un vendeur</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form  action="{{ route('vendeurs.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="row form-group">
-                            <label for="ref">Nom:</label>
-                            <input type="text" class="form-control input-full" id="nom" name="nom" placeholder="Enter Input">
-                            @error('nom')
-                            <p class="text-danger">
-                                {{ $message }}
-                            </p>
-                            @enderror
-                        </div>
-                        <div class="row form-group">
-                            <label for="email">Email:</label>
-                            <select name="email" class="form-select form-control-lg" id="email">
-                                @foreach ($users as $u)
-                                    <option value="{{ $u->id }}"> {{$u->email}} </option>
-                                @endforeach
-                            </select>
-                            @error('email')
-                            <p class="text-danger">
-                                {{ $message }}
-                            </p>
-                            @enderror
-                        </div>
-
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-primary">Soumettre</button>
-                    </div>
-                </form>
+          <!-- Modal Modifier -->
+          @foreach($users as $index=>$u)
+          <!-- Modal Modifier -->
+        <div class="modal fade" id="editUser{{ $u->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modifier l'utilisateur <span class="text-primary">{{$u->name}}</span></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
+              <form  action="{{ route('users.update') }}" method="POST" enctype="multipart/form-data">
+                  @csrf
+                  <div class="modal-body">
+                      <div class="row">
+                          <div class="col form-group">
+                              <label for="name">Nom:</label>
+                              <input type="text" class="form-control input-full" id="name" name="name"  value="{{ $u->name }}">
+                              @error('name')
+                              <p class="text-danger">
+                                  {{ $message }}
+                              </p>
+                              @enderror
+                          </div>
+                          <div class="col form-group">
+                              <label for="email">email</label>
+                              <input type="email" class="form-control input-full" id="email" name="email" placeholder="Enter Input" value="{{ $u->email }}">
+                              @error('email')
+                              <p class="text-danger">
+                                  {{ $message }}
+                              </p>
+                              @enderror
+                          </div>
+                      </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="role" id="role1" {{ $u->role == 'client' ? 'checked' : '' }} value="client">
+                                <label class="form-check-label" for="role1">
+                                Client
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="role" id="role2" {{ $u->role == 'vendeur' ? 'checked' : '' }} value="vendeur">
+                                <label class="form-check-label" for="role2">
+                                Vendeur
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="role" id="role3" {{ $u->role == 'admin' ? 'checked' : '' }} value="admin">
+                                <label class="form-check-label" for="role3">
+                                Admin
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="state" name="state" value="{{$u->state}}" {{ $u->state == 'Actif' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="state">{{ $u->state }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" value="{{ $u->id }}" name="id_user">
+
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-danger btn-border" data-bs-dismiss="modal">Annuler</button>
+                      <button type="submit" class="btn btn-primary">Modifier</button>
+                  </div>
+              </form>
             </div>
           </div>
+        </div>
 
+
+
+        @endforeach
         <!--   Core JS Files   -->
         <script src="{{asset('build/dashassets/js/core/jquery-3.7.1.min.js')}}"></script>
         <script src="{{asset('build/dashassets/js/core/popper.min.js')}}"></script>
@@ -265,3 +299,4 @@
         </script>
       </body>
     </html>
+

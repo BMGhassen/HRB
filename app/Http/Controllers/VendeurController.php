@@ -11,8 +11,10 @@ class VendeurController extends Controller
     //afficher la liste des articles
     public function index(){
         $vendeurs = Vendeur::all();
-        $users =User::all();
+        // dd($vendeurs);
+        $users = User::all();
         return view('admin.vendeurs.ven')->with('vendeurs',$vendeurs)->with('users', $users);
+
     }
 
     //Ajouter un nouvel article
@@ -28,6 +30,7 @@ class VendeurController extends Controller
             $vendeur->nom = $request->nom;
             $vendeur->user_id = $request->email;
            // $article->save();
+
 
 
             if($vendeur->save()){

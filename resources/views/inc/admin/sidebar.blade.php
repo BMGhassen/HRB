@@ -58,12 +58,7 @@
             </a>
           </li>
           <li class="nav-item active">
-            <a
-              data-bs-toggle="collapse"
-              href="#dashboard"
-              class="collapsed"
-              aria-expanded="false"
-            >
+            <a href="/admin/users" >
               <i class="fas fa-home"></i>
               <p>Utilisateurs</p>
               {{-- <span class="caret"></span> --}}

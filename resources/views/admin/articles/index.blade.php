@@ -87,7 +87,15 @@
                 <div
                   class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
                 >
-               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Ajouter Article</button>
+                <div class="row">
+                    <div class="col-5">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Ajouter</button>
+                    </div>
+                    <br>
+                    <div class="col-7">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#import">Importer</button>
+                    </div>
+                </div>
                 </div>
                 <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                     <table class="table table-head-bg-warning mt-4">
@@ -164,197 +172,6 @@
             </footer>
           </div>
 
-          <!-- Custom template | don't include it in your project! -->
-          <div class="custom-template">
-            <div class="title">Settings</div>
-            <div class="custom-content">
-              <div class="switcher">
-                <div class="switch-block">
-                  <h4>Logo Header</h4>
-                  <div class="btnSwitch">
-                    <button
-                      type="button"
-                      class="selected changeLogoHeaderColor"
-                      data-color="dark"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="blue"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="purple"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="light-blue"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="green"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="orange"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="red"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="white"
-                    ></button>
-                    <br />
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="dark2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="blue2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="purple2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="light-blue2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="green2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="orange2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeLogoHeaderColor"
-                      data-color="red2"
-                    ></button>
-                  </div>
-                </div>
-                <div class="switch-block">
-                  <h4>Navbar Header</h4>
-                  <div class="btnSwitch">
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="dark"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="blue"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="purple"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="light-blue"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="green"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="orange"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="red"
-                    ></button>
-                    <button
-                      type="button"
-                      class="selected changeTopBarColor"
-                      data-color="white"
-                    ></button>
-                    <br />
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="dark2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="blue2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="purple2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="light-blue2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="green2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="orange2"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeTopBarColor"
-                      data-color="red2"
-                    ></button>
-                  </div>
-                </div>
-                <div class="switch-block">
-                  <h4>Sidebar</h4>
-                  <div class="btnSwitch">
-                    <button
-                      type="button"
-                      class="changeSideBarColor"
-                      data-color="white"
-                    ></button>
-                    <button
-                      type="button"
-                      class="selected changeSideBarColor"
-                      data-color="dark"
-                    ></button>
-                    <button
-                      type="button"
-                      class="changeSideBarColor"
-                      data-color="dark2"
-                    ></button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- End Custom template -->
         </div>
 
 
@@ -461,7 +278,38 @@
               </div>
             </div>
           </div>
-
+          <!-- Modal import -->
+          <div class="modal fade" id="import" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Importer un fichier</span></h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form  action="{{ route('articles.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col form-group">
+                                <div class="mb-3">
+                                    <label for="import_csv" class="form-label">Upload File</label>
+                                    <input class="form-control" type="file" id="import_csv" name="import_csv" accept=".csv">
+                                </div>
+                                @error('name')
+                                <p class="text-danger">
+                                    {{ $message }}
+                                </p>
+                                @enderror
+                            </div>
+                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-border" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-primary">Modifier</button>
+                    </div>
+                </form>
+              </div>
+            </div>
+        </div>
           @foreach($articles as $index=>$a)
             <!-- Modal Modifier -->
           <div class="modal fade" id="editArticle{{$a->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

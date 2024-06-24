@@ -76,12 +76,90 @@ class ArticleController extends Controller
         $article->qte_reserve = $request->reserve;
         $article->prix = $request->prix;
         $article->description = $request->description;
-        $article->description = $request->description;
         if($article->update()){
             return redirect()->route('articles')->with('success', 'Article updated successfully.');
         }
         else {
             return back()->with('error', 'Failed to update article.');
+        }
+    }
+
+    public function importCSV(Request $request)
+    {
+        $request->validate([
+            'import_csv' => 'required',
+        ]);
+        // dd($request->import_csv);
+        //read csv file and skip data
+        $file = $request->file('import_csv');
+        $handle = fopen($file->path(), 'r');
+
+        //skip the header row
+        fgetcsv($handle);
+
+        $chunksize = 25;
+        while(!feof($handle))
+        {
+            $chunkdata = [];
+
+            for($i = 0; $i<$chunksize; $i++)
+            {
+                $data = fgetcsv($handle,0, ';');
+                if($data === false)
+                {
+                    break;
+                }
+                $chunkdata[] = $data;
+            }
+            $this->getchunkdata($chunkdata);
+
+        }
+        fclose($handle);
+
+        return redirect()->route('articles')->with('success', 'Article updated successfully.');
+    }
+    public function getchunkdata($chunkdata)
+    {
+        foreach($chunkdata as $column){
+
+            $ref = $column[0];
+
+            $designation = $column[1];
+            $prix  = $column[2];
+            $qte_stock = $column[3];
+            $qte_instance = $column[4];
+            $qte_reserve = $column[5];
+
+            $description ='*';
+
+            $article = Article::where('ref',  $ref)->get();
+          //  dd($article!=null);
+            if ($article->isempty($article))
+            {
+                $article = new Article();
+                $article->ref = $ref;
+                $article->designation = $designation;
+                $article->prix = $prix;
+                $article->qte_stock = $qte_stock;
+                $article->qte_instance = $qte_instance;
+                $article->qte_reserve = $qte_reserve;
+
+                $article->description = $description;
+
+                $article->save();
+            }
+            else
+            {
+                $article->ref = $ref;
+            $article->designation = $designation;
+            $article->prix = $prix;
+            $article->qte_stock = $qte_stock;
+            $article->qte_instance = $qte_instance;
+            $article->qte_reserve = $qte_reserve;
+
+            $article->description = $description;
+            $article->replace($article);
+            }
         }
     }
 }

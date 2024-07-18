@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ArticleController extends Controller
 {
     //afficher la liste des articles
     public function index(){
-        $articles = Article::all();
+
+       $articles = Article::orderBy('ref','ASC')->paginate(20);
         return view('admin.articles.index')->with('articles',$articles);
     }
+
 
     //Ajouter un nouvel article
     public function store(Request $request){
@@ -86,6 +89,7 @@ class ArticleController extends Controller
 
     public function importCSV(Request $request)
     {
+        ini_set('max_execution_time', 1800);
         $request->validate([
             'import_csv' => 'required',
         ]);
@@ -162,4 +166,33 @@ class ArticleController extends Controller
             }
         }
     }
+
+    public function examples(){
+
+      $articleRefs = ['KAMO 27D04', 'KAMO 7096', 'KAMO 103001', 'KAMO 112019', 'FARE DW029', 'FARE TB210', 'FARE K15721', 'FARE 23873'];
+      $products = Article::whereIn('ref', $articleRefs)->get();
+       return view('welcome')->with('products', $products);
+   }
+
+
+
+    public function recherche(Request $request){
+        // $articles = Article::all();
+        if ($request)
+        {
+         $key = trim($request->get('q'));
+
+         //  $articles = article::query()
+           $articles = article::where('ref', 'like', "%{$key}%")->orderBy('ref','ASC')
+
+
+              ;
+        }
+        else
+        {
+         $articles = Article::orderBy('ref','ASC');
+        }
+
+         return view('admin.articles.index')->with('articles',$articles ->paginate(20)->withQueryString());
+     }
 }

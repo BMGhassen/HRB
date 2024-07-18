@@ -29,7 +29,6 @@ class VendeurController extends Controller
             $vendeur = new Vendeur();
             $vendeur->nom = $request->nom;
             $vendeur->user_id = $request->email;
-           // $article->save();
 
 
 
@@ -50,32 +49,32 @@ class VendeurController extends Controller
         }
     }
 
-    public function update(Request $request){
-        $request->validate([
-            'ref' => 'required',
-            'designation' => 'required',
-            'stock' => 'required|integer',
-            'instance' => 'required|integer',
-            'reserve' => 'required|integer',
-            'prix' => 'required|numeric',
-            'description' => 'required',
-        ]);
+    // public function update(Request $request){
+    //     $request->validate([
+    //         'ref' => 'required',
+    //         'designation' => 'required',
+    //         'stock' => 'required|integer',
+    //         'instance' => 'required|integer',
+    //         'reserve' => 'required|integer',
+    //         'prix' => 'required|numeric',
+    //         'description' => 'required',
+    //     ]);
 
-        $id = $request->id_article;
-        $article = Article::find($id);
-        $article->ref = $request->ref;
-        $article->designation = $request->designation;
-        $article->qte_stock = $request->stock;
-        $article->qte_instance = $request->instance;
-        $article->qte_reserve = $request->reserve;
-        $article->prix = $request->prix;
-        $article->description = $request->description;
-        $article->description = $request->description;
-        if($article->update()){
-            return redirect()->route('articles')->with('success', 'Article updated successfully.');
-        }
-        else {
-            return back()->with('error', 'Failed to update article.');
-        }
-    }
+    //     $id = $request->id_article;
+    //     $article = Article::find($id);
+    //     $article->ref = $request->ref;
+    //     $article->designation = $request->designation;
+    //     $article->qte_stock = $request->stock;
+    //     $article->qte_instance = $request->instance;
+    //     $article->qte_reserve = $request->reserve;
+    //     $article->prix = $request->prix;
+    //     $article->description = $request->description;
+    //     $article->description = $request->description;
+    //     if($article->update()){
+    //         return redirect()->route('articles')->with('success', 'Article updated successfully.');
+    //     }
+    //     else {
+    //         return back()->with('error', 'Failed to update article.');
+    //     }
+    // }
 }

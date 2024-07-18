@@ -11,23 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('articles', function (Blueprint $table) {
+        Schema::create('commandes', function (Blueprint $table) {
             $table->id();
-            $table->string('ref')->nullable();
-            $table->string('designation');
-            $table->integer('qte_stock');
-            $table->integer('qte_instance');
-            $table->integer('qte_reserve');
-            $table->float('prix', 8, 3);
-            $table->text('description');
+            $table->enum('etat',['Brouillon','Validé','EnCours','Réservée','Livrée'])->default('Brouillon');
+            $table->unsignedBigInteger('client_id');
+            $table->foreign('client_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('articles');
+        Schema::dropIfExists('commandes');
     }
 };

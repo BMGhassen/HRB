@@ -36,7 +36,7 @@
           <li class="nav-item active">
             <a
               {{-- data-bs-toggle="collapse" --}}
-              href="/admin/articles"
+              href="/admin/clients"
               class="collapsed"
               aria-expanded="false"
             >

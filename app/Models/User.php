@@ -47,4 +47,7 @@ class User extends Authenticatable
     public function vendeurs(){
         return $this->hasOne(Vendeur::class,'user_id', 'id');
     }
+    public function commandes(){
+        return $this->hasMany(Commande::class,'client_id', 'id');
+    }
 }

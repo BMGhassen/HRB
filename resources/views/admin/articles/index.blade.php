@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Document</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
     <link rel="icon" href="{{ asset('build/dashassets/img/kaiadmin/favicon.ico') }}" type="image/x-icon" />
@@ -178,7 +179,11 @@
                                                     href="{{ route('articles.delete', ['id' => $a->id]) }}"
                                                     class="btn btn-link btn-danger">
                                                     <i class="fa fa-times"></i>
-                                                    <a>
+                                                </a>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" data-id="{{ $a->id }}" {{ $a->sel == '1' ? 'checked' : '' }} value="1">
+                                                    {{-- <label class="form-check-label" for="flexSwitchCheckDefault">Default switch checkbox input</label> --}}
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -505,6 +510,31 @@
             lineWidth: "2",
             lineColor: "#ffa534",
             fillColor: "rgba(255, 165, 52, .14)",
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.form-check-input').change(function() {
+                var selValue = $(this).is(':checked') ? 1 : 0;
+                var id = $(this).data('id');
+
+                $.ajax({
+                    url: '{{ route("updateSel") }}', // Define this route in your routes file
+                    type: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        id: id,
+                        sel: selValue
+                    },
+                    success: function(response) {
+                        console.log('Switch value updated successfully');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error updating switch value:', error);
+                    }
+                });
+            });
         });
     </script>
 </body>

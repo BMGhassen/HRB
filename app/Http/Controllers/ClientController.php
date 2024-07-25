@@ -12,10 +12,8 @@ use Illuminate\Http\Request;
 class ClientController extends Controller
 {
     public function dashboard(){
-         // $articles = Article::all();
-       $articleRefs = ['KAMO 27D04', 'KAMO 7096', 'KAMO 103001', 'KAMO 112019', 'FARE DW029', 'FARE TB210', 'FARE K15721', 'FARE 23873'];
        $articles = Article::all();
-       $produits = Article::whereIn('ref', $articleRefs)->get();
+       $produits = Article::where('sel', '1')->get();
         return view('client.dashboard')->with('produits',$produits)->with('articles',$articles);
     }
 
@@ -95,6 +93,7 @@ class ClientController extends Controller
     $query = Article::where('ref', 'LIKE', "%{$searchTerm}%")->orderBy('ref', 'ASC');
 
     $results = $query->paginate(20)->withQueryString();
+
     return view('client.listA', compact('results', 'searchTerm'));
 }
 

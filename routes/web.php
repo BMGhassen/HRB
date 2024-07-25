@@ -50,6 +50,7 @@ Route::get('/admin/articles/{id}/delete', [ArticleController::class, 'destroy'])
 Route::post('/admin/articles/majart',[ArticleController::class, 'importCSV'])->name('articles.import')->middleware('auth','admin');
 Route::post('/admin/equiv',[EquivalentController::class, 'importCSV'])->name('equi.import')->middleware('auth','admin');
 Route::post('/admin/origin',[OriginController::class, 'importCSV'])->name('origin.import')->middleware('auth','admin');
+Route::post('/admin/update-sel', [ArticleController::class, 'updateSel'])->name('updateSel');
 
 
 Route::get('/admin/vendeurs', [VendeurController::class, 'index'])->name('vendeurs')->middleware('auth','admin');
@@ -60,7 +61,6 @@ Route::post('/admin/vendeurs/store', [VendeurController::class, 'store'])->name(
 Route::get('/admin/users', [UserController::class, 'index'])->name('Users')->middleware('auth','admin');
 Route::post('/admin/users/update',[UserController::class, 'update'])->name('users.update')->middleware('auth','admin');
 Route::get('/admin/users/{id}/delete', [UserController::class, 'destroy'])->name('users.delete')->middleware('auth','admin');
-
 Route::get('/admin/clients', [ClientController::class, 'index'])->name('clients')->middleware('auth','admin');
 Route::post('/admin/clients/store', [ClientController::class, 'store'])->name('clients.store')->middleware('auth','admin');
 // Route::post('/admin/clients/update',[ClientController::class, 'update'])->name('clients.update');
@@ -68,5 +68,6 @@ Route::post('/admin/clients/store', [ClientController::class, 'store'])->name('c
 
 
 //guest routes
-Route::get('/guest/article/recherche', [GuestController::class, 'search'])->name('guest.article.search');
+Route::get('/guest/recherche', [GuestController::class, 'search'])->name('guest.article.search');
 Route::get('/guest/article/{id}/details', [GuestController::class, 'productDetails'])->name('guest.details');
+Route::get('/guest/autocomplete', [GuestController::class,'autocomplete'])->name('autocomplete');

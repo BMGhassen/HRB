@@ -21,10 +21,20 @@ class GuestController extends Controller
     $searchTerm = $request->input('search');
 
     $query = Article::where('ref', 'LIKE', "%{$searchTerm}%")->orderBy('ref', 'ASC');
+    $articles2 = article::whereIn('id', equivalent::select('prod_id')->where('ref','like', "%{$searchTerm}%" ));
+    $articles3 = article::whereIn('id', Origin::select('prod_id')->where('ref_O','like', "%{$searchTerm}%" ));
+    $results = $query->union($articles2)->union($articles3)->paginate(20)->withQueryString();
 
-    $results = $query->paginate(20)->withQueryString();
     return view('guest.listA', compact('results', 'searchTerm'));
 }
+
+public function autocomplete(Request $request)
+    {
+        $query = $request->get('query');
+        $data = Article::where('ref','LIKE','%' . $query . '%')->get();
+
+        return response()->json($data);
+    }
 
 public function productDetails( $id )
     {

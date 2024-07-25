@@ -11,6 +11,8 @@
     <!-- Favicon -->
     <link href="build/shopassets/img/favicon.ico" rel="icon">
 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -37,12 +39,13 @@
                 </a>
             </div>
             <div class="col-lg-4 col-6 text-left">
+                <div class="card">
                 <form action= "{{ route('guest.article.search') }}" method="GET">
                     @csrf
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Rechercher Par Référence" name="search" required>
+                        <input type="text" class="typeahead form-control" placeholder="Rechercher Par Référence" name="search" required>
                         <div class="input-group-append">
-                            <button type="submit">
+                            <button class="input-group-text bg-transparent text-primary" type="submit">
 
                                 <i class="fa fa-search"></i>
 
@@ -50,6 +53,7 @@
                         </div>
                     </div>
                 </form>
+                </div>
             </div>
 
         </div>
@@ -89,23 +93,15 @@
             </div>
             <div class="col-lg-9">
                 <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-0">
-                    <a href="" class="text-decoration-none d-block d-lg-none">
-                        <span class="h1 text-uppercase text-dark bg-light px-2">Multi</span>
-                        <span class="h1 text-uppercase text-light bg-primary px-2 ml-n1">Shop</span>
-                    </a>
-                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="#" class="nav-item nav-link active">Home</a>
-                            <a href="#" class="nav-item nav-link">Produits</a>
-                            <a href="detail.html" class="nav-item nav-link">Nos Partenaires</a>
-                            <a href="detail.html" class="nav-item nav-link">Nos Marques</a>
-                            <a href="detail.html" class="nav-item nav-link">News</a>
-                            <a href="detail.html" class="nav-item nav-link">à propos</a>
+                            <a href="/" class="nav-item nav-link active">Home</a>
+                            <a href="" class="nav-item nav-link">Nos Partenaires</a>
+                            <a href="" class="nav-item nav-link">Nos Marques</a>
+                            <a href="" class="nav-item nav-link">News</a>
+                            <a href="" class="nav-item nav-link">à propos</a>
 
-                            <a href="contact.html" class="nav-item nav-link">Contact</a>
+                            <a href="" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
                             @if (Route::has('login'))
@@ -127,3 +123,26 @@
         </div>
     </div>
     <!-- Navbar End -->
+
+
+
+
+
+
+    <script type="text/javascript">
+        var path = "{{ route('autocomplete') }}";
+        $('input.typeahead').typeahead({
+            source:  function (query, process) {
+            return $.get({{ route('autocomplete') }}, { query: query }, function (data) {
+                    return process(data);
+                });
+            },
+            matcher: function(item) {
+        // Ensure item is a string
+        if (typeof item !== 'string') {
+            item = item.toString();
+        }
+        return item.toLowerCase().indexOf(this.query.toLowerCase()) !== -1;
+    }
+        });
+    </script>

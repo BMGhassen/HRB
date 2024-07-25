@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('qte_reserve');
             $table->float('prix', 8, 3);
             $table->text('description');
+            $table->enum('sel',['0', '1'])->default('0');
             $table->timestamps();
         });
     }

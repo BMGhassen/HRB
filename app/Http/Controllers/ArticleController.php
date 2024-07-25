@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\equivalent;
+use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
@@ -167,13 +168,27 @@ class ArticleController extends Controller
         }
     }
 
-    public function examples(){
-
-      $articleRefs = ['KAMO 27D04', 'KAMO 7096', 'KAMO 103001', 'KAMO 112019', 'FARE DW029', 'FARE TB210', 'FARE K15721', 'FARE 23873'];
-      $products = Article::whereIn('ref', $articleRefs)->get();
+    public function examples()
+    {
+      $products = Article::where('sel', '1')->get();
        return view('welcome')->with('products', $products);
    }
 
+   public function updateSel(Request $request)
+    {
+        $id = $request->input('id');
+        $sel = $request->input('sel');
+
+        $item = Article::find($id);
+        if ($item) {
+            $item->sel = $sel;
+            $item->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Item not found'], 404);
+    }
 
 
     public function recherche(Request $request){
@@ -183,10 +198,8 @@ class ArticleController extends Controller
          $key = trim($request->get('q'));
 
          //  $articles = article::query()
-           $articles = article::where('ref', 'like', "%{$key}%")->orderBy('ref','ASC')
+           $articles = article::where('ref', 'like', "%{$key}%")->orderBy('ref','ASC');
 
-
-              ;
         }
         else
         {

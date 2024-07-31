@@ -2,17 +2,6 @@
 
 
     <!-- Breadcrumb Start -->
-    <div class="container-fluid">
-        <div class="row px-xl-5">
-            <div class="col-12">
-                <nav class="breadcrumb bg-light mb-30">
-                    <a class="breadcrumb-item text-dark" href="#">Home</a>
-                    <a class="breadcrumb-item text-dark" href="#">Shop</a>
-                    <span class="breadcrumb-item active">Shop Detail</span>
-                </nav>
-            </div>
-        </div>
-    </div>
     <!-- Breadcrumb End -->
 
 
@@ -38,8 +27,8 @@
 
             <div class="col-lg-7 h-auto mb-30">
                 <div class="h-100 bg-light p-30">
-                    <h3>{{$article->designation}} </h3>
-                    <p>Réf: {{$article->ref}}</p>
+                    <h3>{{$article->ref}} </h3>
+                    <p>{{$article->designation}}</p>
                     @if ($article->qte_stock != 0 && $article->qte_instance == 0)
                         <p class="text-success">En Stock</p>
                     @elseif ($article->qte_stock == 0 && $article->qte_instance != 0)

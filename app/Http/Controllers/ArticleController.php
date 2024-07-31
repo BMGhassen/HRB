@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Article;
+use App\Jobs\ProcessCsv;
 use Illuminate\View\View;
 use App\Models\equivalent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
     //afficher la liste des articles
+    private $nombrer=0;
     public function index(){
 
        $articles = Article::orderBy('ref','ASC')->paginate(20);
@@ -90,6 +97,7 @@ class ArticleController extends Controller
 
     public function importCSV(Request $request)
     {
+        $this->nombrer=0;
         ini_set('max_execution_time', 1800);
         $request->validate([
             'import_csv' => 'required',
@@ -102,9 +110,10 @@ class ArticleController extends Controller
         //skip the header row
         fgetcsv($handle);
 
-        $chunksize = 25;
+        $chunksize =1000;
         while(!feof($handle))
-        {
+        {   $output = new ConsoleOutput();
+            $output->writeln($this->nombrer);
             $chunkdata = [];
 
             for($i = 0; $i<$chunksize; $i++)
@@ -116,7 +125,7 @@ class ArticleController extends Controller
                 }
                 $chunkdata[] = $data;
             }
-            $this->getchunkdata($chunkdata);
+            $this->getchunkdata2($chunkdata);
 
         }
         fclose($handle);
@@ -137,33 +146,43 @@ class ArticleController extends Controller
 
             $description ='*';
 
+            $this->nombrer++;
+
             $article = Article::where('ref',  $ref)->get();
+        //   $artid = Article::select('id')
+        //                    ->where('ref', '=',  $ref)
+        //                    ->get();
           //  dd($article!=null);
+
+
             if ($article->isempty($article))
+            //if ($artid->isempty($artid))
             {
-                $article = new Article();
-                $article->ref = $ref;
-                $article->designation = $designation;
-                $article->prix = $prix;
-                $article->qte_stock = $qte_stock;
-                $article->qte_instance = $qte_instance;
-                $article->qte_reserve = $qte_reserve;
+                $output = new ConsoleOutput();
+                $output->writeln('2');
+                $arti =new Article();
+                $arti->ref = $ref;
+                $arti->designation = $designation;
+                $arti->prix = $prix;
+                $arti->qte_stock = $qte_stock;
+                $arti->qte_instance = $qte_instance;
+                $arti->qte_reserve = $qte_reserve;
 
-                $article->description = $description;
+                $arti->description = $description;
 
-                $article->save();
+                $arti->save();
             }
             else
             {
-                $article->ref = $ref;
-            $article->designation = $designation;
-            $article->prix = $prix;
-            $article->qte_stock = $qte_stock;
-            $article->qte_instance = $qte_instance;
-            $article->qte_reserve = $qte_reserve;
 
-            $article->description = $description;
-            $article->replace($article);
+                //$art= Article::find( $artid->first()->id);
+             $art=$article->first();
+            $art->designation = $designation;
+            $art->prix = $prix;
+            $art->qte_stock = $qte_stock;
+            $art->qte_instance = $qte_instance;
+            $art->qte_reserve = $qte_reserve;
+            $art->save();
             }
         }
     }

@@ -91,9 +91,9 @@ class ClientController extends Controller
     $searchTerm = $request->input('search');
 
     $query = Article::where('ref', 'LIKE', "%{$searchTerm}%")->orderBy('ref', 'ASC');
-
-    $results = $query->paginate(20)->withQueryString();
-
+    $articles2 = article::whereIn('id', equivalent::select('prod_id')->where('ref','like', "%{$searchTerm}%" ));
+    $articles3 = article::whereIn('id', Origin::select('prod_id')->where('ref_O','like', "%{$searchTerm}%" ));
+    $results = $query->union($articles2)->union($articles3)->paginate(20)->withQueryString();
     return view('client.listA', compact('results', 'searchTerm'));
 }
 

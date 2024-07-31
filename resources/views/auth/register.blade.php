@@ -27,12 +27,10 @@
             </span>
             @enderror
           <input type="password" placeholder="Confirmer votre mot de passe" id="password-confirm" class="form-control" name="password_confirmation" required autocomplete="new-password">
-          <button type="submit" class="btn btn-primary">
-            {{ __('Valider') }}
-            </button>
+                <input type="submit" class="button btn btn-primary" value="valider">
         </form>
         <div class="signup">
-          <span class="signup">Vous avez déjà un compte?
+          <span class="signup" style="color: #fff">Vous avez déjà un compte?
            <a href="{{route('login')}}">Se connecter</a>
           </span>
         </div>

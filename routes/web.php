@@ -65,8 +65,8 @@ Route::get('/admin/clients', [ClientController::class, 'index'])->name('clients'
 Route::post('/admin/clients/store', [ClientController::class, 'store'])->name('clients.store')->middleware('auth','admin');
 // Route::post('/admin/clients/update',[ClientController::class, 'update'])->name('clients.update');
 // Route::get('/admin/clients/{id}/delete', [ClientController::class, 'destroy'])->name('clients.delete');
-
-
+Route::get('/progress', [ArticleController::class, 'getProgress'])->name('progress');
+Route::post('/csv/upload', [ArticleController::class, 'upload'])->name('csv.upload');
 //guest routes
 Route::get('/guest/recherche', [GuestController::class, 'search'])->name('guest.article.search');
 Route::get('/guest/article/{id}/details', [GuestController::class, 'productDetails'])->name('guest.details');

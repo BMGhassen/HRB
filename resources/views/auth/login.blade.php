@@ -19,12 +19,10 @@
                 {{ __('Mot de passe oublié ?') }}
             </a>
         @endif
-        <button type="submit">
-            {{ __('Valider') }}
-        </button>
+            <input type="submit" class="button btn btn-primary" value="valider">
       </form>
       <div class="signup">
-        <span class="signup">Vous n'avez pas de compte ?
+        <span class="signup" style="color: #fff">Vous n'avez pas de compte ?
          <a href="{{route('register')}}">S'inscrire</a>
         </span>
       </div>

@@ -4,7 +4,7 @@
       <div class="logo-header mt-5" data-background-color="dark">
         <a href="/admin/dashboard" class="logo">
           <img
-            src="{{asset('build/dashassets/img/logo_header.png')}}"
+            src="{{asset('build/assets/img/007.png')}}"
             alt="navbar brand"
             class="navbar-brand"
             height="150"
@@ -29,8 +29,21 @@
         <ul class="nav nav-secondary">
           <li class="nav-item active">
             <a href="/admin/articles">
-              <i class="fas fa-home"></i>
+              <i class="fas fa-tags"></i>
               <p>Articles</p>
+            </a>
+          </li>
+          <li class="nav-item active">
+            <a href="/admin/users" >
+                <i class="fas fa-solid fa-users"></i>
+              <p>Utilisateurs</p>
+              {{-- <span class="caret"></span> --}}
+            </a>
+          </li>
+          <li class="nav-item active">
+            <a href="/admin/vendeurs">
+                <i class="fas fa-address-card"></i>
+              <p>Vendeurs</p>
             </a>
           </li>
           <li class="nav-item active">
@@ -40,7 +53,7 @@
               class="collapsed"
               aria-expanded="false"
             >
-              <i class="fas fa-home"></i>
+            <i class="fas fa-user-tie"></i>
               <p>Clients</p>
               {{-- <span class="caret"></span> --}}
             </a>
@@ -52,22 +65,9 @@
               class="collapsed"
               aria-expanded="false"
             >
-              <i class="fas fa-home"></i>
+            <i class="fas fa-dolly-flatbed"></i>
               <p>Commandes</p>
               {{-- <span class="caret"></span> --}}
-            </a>
-          </li>
-          <li class="nav-item active">
-            <a href="/admin/users" >
-              <i class="fas fa-home"></i>
-              <p>Utilisateurs</p>
-              {{-- <span class="caret"></span> --}}
-            </a>
-          </li>
-          <li class="nav-item active">
-            <a href="/admin/vendeurs">
-              <i class="fas fa-home"></i>
-              <p>Vendeurs</p>
             </a>
           </li>
         </ul>

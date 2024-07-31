@@ -6,20 +6,25 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <link
+          rel="icon"
+          href="{{asset('build/assets/img/007.ico')}}"
+          type="image/x-icon"
+        />
+    <title>Etablissement Rekik</title>
     <!---Custom CSS File--->
     <link rel="stylesheet" href="{{asset('build/assets/css/style.css')}}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
     <!-- Scripts -->
     {{-- @vite(['resources/sass/app.scss', 'resources/js/app.js']) --}}
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-light bg-light">
-            <button class="button-52" role="button">Accueuil</button>
+            <a type="button" href="/" class="btn btn-primary mt-3">
+                Accueuil
+            </a>
         </nav>
         {{-- <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">

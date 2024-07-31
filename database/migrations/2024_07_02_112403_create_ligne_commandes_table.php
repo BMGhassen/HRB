@@ -26,7 +26,10 @@ return new class extends Migration
      * Reverse the migrations.
      */
     public function down(): void
-    {
+    {   Schema::table('ligne_commandes', function (Blueprint $table) {
+            $table->dropForeign(['article_id']);
+            $table->dropForeign(['commande_id']);
+        });
         Schema::dropIfExists('ligne_commandes');
     }
 };

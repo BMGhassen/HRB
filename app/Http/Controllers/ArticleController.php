@@ -2,13 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Article;
-use Illuminate\Http\Request;
+use App\Jobs\ProcessCsv;
 use Illuminate\View\View;
+use App\Models\equivalent;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
     //afficher la liste des articles
+    private $nombrer=0;
     public function index(){
 
        $articles = Article::orderBy('ref','ASC')->paginate(20);
@@ -89,6 +97,7 @@ class ArticleController extends Controller
 
     public function importCSV(Request $request)
     {
+        $this->nombrer=0;
         ini_set('max_execution_time', 1800);
         $request->validate([
             'import_csv' => 'required',
@@ -101,9 +110,10 @@ class ArticleController extends Controller
         //skip the header row
         fgetcsv($handle);
 
-        $chunksize = 25;
+        $chunksize =1000;
         while(!feof($handle))
-        {
+        {   $output = new ConsoleOutput();
+            $output->writeln($this->nombrer);
             $chunkdata = [];
 
             for($i = 0; $i<$chunksize; $i++)
@@ -115,7 +125,7 @@ class ArticleController extends Controller
                 }
                 $chunkdata[] = $data;
             }
-            $this->getchunkdata($chunkdata);
+            $this->getchunkdata2($chunkdata);
 
         }
         fclose($handle);
@@ -136,44 +146,68 @@ class ArticleController extends Controller
 
             $description ='*';
 
+            $this->nombrer++;
+
             $article = Article::where('ref',  $ref)->get();
+        //   $artid = Article::select('id')
+        //                    ->where('ref', '=',  $ref)
+        //                    ->get();
           //  dd($article!=null);
+
+
             if ($article->isempty($article))
+            //if ($artid->isempty($artid))
             {
-                $article = new Article();
-                $article->ref = $ref;
-                $article->designation = $designation;
-                $article->prix = $prix;
-                $article->qte_stock = $qte_stock;
-                $article->qte_instance = $qte_instance;
-                $article->qte_reserve = $qte_reserve;
+                $output = new ConsoleOutput();
+                $output->writeln('2');
+                $arti =new Article();
+                $arti->ref = $ref;
+                $arti->designation = $designation;
+                $arti->prix = $prix;
+                $arti->qte_stock = $qte_stock;
+                $arti->qte_instance = $qte_instance;
+                $arti->qte_reserve = $qte_reserve;
 
-                $article->description = $description;
+                $arti->description = $description;
 
-                $article->save();
+                $arti->save();
             }
             else
             {
-                $article->ref = $ref;
-            $article->designation = $designation;
-            $article->prix = $prix;
-            $article->qte_stock = $qte_stock;
-            $article->qte_instance = $qte_instance;
-            $article->qte_reserve = $qte_reserve;
 
-            $article->description = $description;
-            $article->replace($article);
+                //$art= Article::find( $artid->first()->id);
+             $art=$article->first();
+            $art->designation = $designation;
+            $art->prix = $prix;
+            $art->qte_stock = $qte_stock;
+            $art->qte_instance = $qte_instance;
+            $art->qte_reserve = $qte_reserve;
+            $art->save();
             }
         }
     }
 
-    public function examples(){
-
-      $articleRefs = ['KAMO 27D04', 'KAMO 7096', 'KAMO 103001', 'KAMO 112019', 'FARE DW029', 'FARE TB210', 'FARE K15721', 'FARE 23873'];
-      $products = Article::whereIn('ref', $articleRefs)->get();
+    public function examples()
+    {
+      $products = Article::where('sel', '1')->get();
        return view('welcome')->with('products', $products);
    }
 
+   public function updateSel(Request $request)
+    {
+        $id = $request->input('id');
+        $sel = $request->input('sel');
+
+        $item = Article::find($id);
+        if ($item) {
+            $item->sel = $sel;
+            $item->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Item not found'], 404);
+    }
 
 
     public function recherche(Request $request){
@@ -183,10 +217,8 @@ class ArticleController extends Controller
          $key = trim($request->get('q'));
 
          //  $articles = article::query()
-           $articles = article::where('ref', 'like', "%{$key}%")->orderBy('ref','ASC')
+           $articles = article::where('ref', 'like', "%{$key}%")->orderBy('ref','ASC');
 
-
-              ;
         }
         else
         {

@@ -189,4 +189,4 @@
 
 
     <!-- Footer Start -->
-    @include('inc.client.footer')
+    @include('inc.guest.footer')

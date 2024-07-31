@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Etablissement Rekik</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
-    <link rel="icon" href="{{ asset('build/dashassets/img/kaiadmin/favicon.ico') }}" type="image/x-icon" />
-
+    <link rel="icon" href="{{ asset('build/assets/img/007.ico') }}" type="image/x-icon" />
     <!-- Fonts and icons -->
+
     <script src="{{ asset('build/dashassets/js/plugin/webfont/webfont.min.js') }}"></script>
     <script>
         WebFont.load({
@@ -106,8 +107,9 @@
                                     <input type="text" class="form-control" placeholder="Rechercher..."
                                         name="q">
                                     <span class="input-group-btn">
-                                        <button class="btn btn-warning btn-border" type="submit"><i
-                                                class="fa fa-search search-icon"></i></button>
+                                        <button class="btn btn-warning btn-border" type="submit">
+                                            <i class="fa fa-search search-icon"></i>
+                                        </button>
                                     </span>
                                 </div>
                             </form>
@@ -178,7 +180,11 @@
                                                     href="{{ route('articles.delete', ['id' => $a->id]) }}"
                                                     class="btn btn-link btn-danger">
                                                     <i class="fa fa-times"></i>
-                                                    <a>
+                                                </a>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" data-id="{{ $a->id }}" {{ $a->sel == '1' ? 'checked' : '' }} value="1">
+                                                    {{-- <label class="form-check-label" for="flexSwitchCheckDefault">Default switch checkbox input</label> --}}
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -193,54 +199,40 @@
                 </div>
             </div>
 
-            <footer class="footer">
-                <div class="container-fluid d-flex justify-content-between">
-                    <nav class="pull-left">
-                        <ul class="nav">
-                            <li class="nav-item">
-                                <a class="nav-link" href="http://www.themekita.com">
-                                    ThemeKita
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#"> Help </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#"> Licenses </a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <div class="copyright">
-                        2024, made with <i class="fa fa-heart heart text-danger"></i> by
-                        <a href="http://www.themekita.com">ThemeKita</a>
-                    </div>
-                    <div>
-                        Distributed by
-                        <a target="_blank" href="https://themewagon.com/">ThemeWagon</a>.
-                    </div>
-                </div>
-            </footer>
+
         </div>
 
     </div>
 
 
     <!-- Modal import -->
-    <div class="modal fade" id="import" tabindex="-1" aria-labelledby="Articles" aria-hidden="true">
+  <div class="modal fade" id="import" tabindex="-1" aria-labelledby="Articles" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Importer un fichier</span></h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('articles.import') }}" method="POST" enctype="multipart/form-data">
+                {{-- <form id="csvForm" enctype="multipart/form-data">
+            @csrf
+            <div class="form-group">
+                <label for="csv_file">Choose CSV file</label>
+                <input type="file" class="form-control-file" id="csv_file" name="csv_file" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+
+        <div class="mt-3">
+            <h3>Progress: <span id="progress">0%</span></h3>
+        </div> --}}
+                <form action="{{route('articles.import')}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row">
                             <div class="col form-group">
                                 <div class="mb-3">
-                                    <label for="import_csv" class="form-label">Importer un fichier</label>
-                                    <input class="form-control" type="file" id="import_csv" name="import_csv"  accept=".csv">
+                                    <label for="csvFile" class="form-label">Importer un fichier</label>
+                                    <input class="form-control" type="file" id="csvFile" name="csv_file"  accept=".csv">
                                 </div>
 
                             </div>
@@ -251,6 +243,9 @@
                         <button type="submit" class="btn btn-primary">Importer</button>
                     </div>
                 </form>
+                <div class="progress mt-3" style="height: 30px;">
+                    <div id="progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
             </div>
         </div>
     </div>
@@ -507,6 +502,33 @@
             fillColor: "rgba(255, 165, 52, .14)",
         });
     </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.form-check-input').change(function() {
+                var selValue = $(this).is(':checked') ? 1 : 0;
+                var id = $(this).data('id');
+
+                $.ajax({
+                    url: '{{ route("updateSel") }}', // Define this route in your routes file
+                    type: 'POST',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        id: id,
+                        sel: selValue
+                    },
+                    success: function(response) {
+                        console.log('Switch value updated successfully');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error updating switch value:', error);
+                    }
+                });
+            });
+        });
+    </script>
+
+
 </body>
 
 </html>

@@ -22,20 +22,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Ensure 'users' and 'notifications' tables exist before querying
-    if (Schema::hasTable('users') && Schema::hasTable('notifications')) {
-        $admin = User::where('role', 'admin')->first();
+        // Admin notifications for every view. Loaded only when a view is rendered (once per
+        // request), so artisan, composer and queue workers never need the database to boot.
+        View::composer('*', function ($view) {
+            static $loaded = null;
 
-        if ($admin) {
-            $unreadNotifications = $admin->unreadNotifications;
-            $unreadNotificationsCount = $unreadNotifications->count();
-        } else {
-            $unreadNotifications = collect(); // empty collection
-            $unreadNotificationsCount = 0;
-        }
+            if ($loaded === null) {
+                $loaded = collect();
+                if (Schema::hasTable('users') && Schema::hasTable('notifications')) {
+                    $admin = User::where('role', 'admin')->first();
+                    $loaded = $admin ? $admin->unreadNotifications : collect();
+                }
+            }
 
-        View::share('unreadNotifications', $unreadNotifications);
-        View::share('unreadNotificationsCount', $unreadNotificationsCount);
-    }
+            $view->with('unreadNotifications', $loaded)
+                 ->with('unreadNotificationsCount', $loaded->count());
+        });
     }
 }

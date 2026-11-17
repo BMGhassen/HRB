@@ -1,133 +1,136 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fr" class="h-full bg-lion-black">
 <head>
-    <meta charset="utf-8">
-    <title>Etablissement Rekik</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Free HTML Templates" name="keywords">
-    <meta content="Free HTML Templates" name="description">
-    <link
-          rel="icon"
-          href="{{asset('build/assets/img/007.ico')}}"
-          type="image/x-icon"
-        />
-    <!-- Favicon -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2B Grossiste | Établissement Rekik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="{{ asset('build/assets/img/007.png') }}" type="image/x-icon" />
 
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Libraries Stylesheet -->
-    <link href="{{asset('build/shopassets/lib/animate/animate.min.css')}}" rel="stylesheet">
-    <link href="{{asset('build/shopassets/lib/owlcarousel/assets/owl.carousel.min.css')}}" rel="stylesheet">
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="{{asset('build/shopassets/css/style.css')}}" rel="stylesheet">
+    @include('inc.theme')
 </head>
+<body class="h-full font-sans antialiased text-white bg-lion-black">
 
-<body>
-    <!-- Topbar Start -->
-    <div class="container-fluid">
-        <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
-            <div class="col-lg-6">
-                <a href="" class="text-decoration-none">
-                    <span class="h1 text-uppercase text-primary bg-dark px-2">Etablissement</span>
-                    <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">Rekik</span>
+    {{-- Top B2B Utility Bar --}}
+    <div class="force-dark bg-lion-ink/90 border-b border-zinc-800 text-[12px] text-zinc-400 py-1.5 px-4">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5 text-zinc-300">
+                    <i class="fa-solid fa-truck-fast text-lion-accent"></i>
+                    <span>Livraison Express <strong>24/48h</strong> sur toute la Tunisie</span>
+                </span>
+                <span class="hidden md:inline text-zinc-600">|</span>
+                <span class="hidden md:flex items-center gap-1.5">
+                    <i class="fa-solid fa-phone text-lion-accent"></i>
+                    <span>Service Pro : <strong class="text-white">+216 71 000 000</strong></span>
+                </span>
+            </div>
+            <div class="flex items-center gap-3">
+                @include('inc.theme-toggle')
+                @auth
+                @if(Auth::user()->state === 'Actif')
+                    <a href="{{ route('home') }}" class="hover:text-white transition-colors flex items-center gap-1.5 font-bold">
+                        <i class="fa-solid fa-user"></i> Mon Espace
+                    </a>
+                @else
+                    <a href="{{ url('/client/pending') }}" class="hover:text-white transition-colors flex items-center gap-1.5 font-bold">
+                        <i class="fa-solid fa-user"></i> Statut du Compte
+                    </a>
+                @endif
+            @else
+                <a href="{{ url('/login') }}" class="hover:text-white transition-colors flex items-center gap-1.5 font-bold">
+                    <i class="fa-solid fa-user"></i> Espace Pro
                 </a>
+            @endauth
             </div>
-            <div class="col-lg-4 col-6 text-left">
-                <div class="card">
-                <form action= "{{ route('guest.article.search') }}" method="GET">
-                    @csrf
-                    <div class="input-group">
-                        <input type="text" class="typeahead form-control" placeholder="Rechercher Par Référence" name="search" required>
-                        {{-- <ul id="suggestions" class="list-group my-2"></ul> --}}
-                        <div class="input-group-append">
-                            <button class="input-group-text bg-transparent text-primary" type="submit">
-
-                                <i class="fa fa-search"></i>
-
-                        </button>
-                        </div>
-                    </div>
-                </form>
-                </div>
-            </div>
-
         </div>
     </div>
-    <!-- Topbar End -->
 
-
-    <!-- Navbar Start -->
-    <div class="container-fluid bg-dark mb-30">
-        <div class="row px-xl-5">
-            <div class="col-lg-3 d-none d-lg-block">
-                <a class="btn d-flex align-items-center justify-content-between bg-primary w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; padding: 0 30px;">
-                    <h6 class="text-dark m-0"><i class="fa fa-bars mr-2"></i></h6>
-                    <i class="fa fa-angle-down text-dark"></i>
-                </a>
-            </div>
-            <div class="col-lg-9">
-                <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-0">
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">
-                            <a href="/" class="nav-item nav-link active">Home</a>
-                            <a href="" class="nav-item nav-link">Nos Partenaires</a>
-                            <a href="" class="nav-item nav-link">Nos Marques</a>
-                            <a href="" class="nav-item nav-link">News</a>
-                            <a href="" class="nav-item nav-link">à propos</a>
-
-                            <a href="" class="nav-item nav-link">Contact</a>
-                        </div>
-                        <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
-                            @if (Route::has('login'))
-
-                                    <a href="{{ route('login') }}" class="btn btn-primary btn-border">Se Connecter</a>
-
-                            @endif
-                            @if (Route::has('register'))
-
-                                    <a href="{{ route('register') }}" class="btn btn-primary btn-border">S'inscrire</a>
-
-                            @endif
-
-
-                        </div>
+    {{-- Main Navbar --}}
+    <header class="force-dark text-white bg-lion-card border-b border-zinc-800 sticky top-0 z-40 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between gap-6">
+                
+                {{-- ── Frameless Large Lion Logo ───────────────────────── --}}
+                <a href="{{ url('/') }}" class="flex-shrink-0 flex items-center gap-3.5 group">
+                    <img src="{{ asset('build/assets/img/007.png') }}" 
+                         alt="Logo Lion Ets. Habib Rekik" 
+                         class="h-14 sm:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_15px_rgba(255,193,7,0.35)]">
+                    <div class="hidden sm:block">
+                        <h1 class="text-white font-black text-xl sm:text-2xl tracking-tight leading-none group-hover:text-lion-accent transition-colors">
+                            ETS. HABIB <span class="text-lion-accent">REKIK</span>
+                        </h1>
+                        <span class="text-lion-accent-light font-bold text-[11px] tracking-[0.16em] uppercase block mt-1">
+                            Pièces Auto en Gros
+                        </span>
                     </div>
+                </a>
+
+                {{-- Search Bar --}}
+                <form action="{{ route('guest.article.search') }}" method="GET" class="flex-1 max-w-2xl hidden md:block">
+                    <div class="flex items-stretch bg-zinc-900 border border-zinc-700 rounded-xl overflow-hidden focus-within:border-[#FFC107] focus-within:ring-1 focus-within:ring-[#FFC107] transition-all">
+                        <select name="category" class="bg-zinc-800 text-zinc-300 border-r border-zinc-700 px-4 py-3 text-sm font-bold focus:outline-none cursor-pointer hidden lg:block">
+                            <option value="all">Toutes les Pièces</option>
+                        </select>
+                        <input type="text" name="search" placeholder="Rechercher référence SKU (ex: 001 AZ2011), Désignation..." required
+                               class="w-full bg-transparent text-white placeholder-zinc-500 text-sm px-4 py-3 focus:outline-none">
+                        <button type="submit" class="bg-[#FFC107] hover:bg-[#FFD54F] text-black font-black px-6 py-3 transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </form>
+
+                {{-- Actions --}}
+                <div class="flex items-center gap-3">
+                    @auth
+                        <span class="hidden sm:inline-block text-xs font-bold text-zinc-400 bg-zinc-900 px-3 py-1.5 rounded-lg border border-zinc-700">
+                            {{ Auth::user()->name }}
+                        </span>
+                        @if(Auth::user()->state === 'Actif')
+                            <a href="{{ route('home') }}" class="flex items-center gap-2 bg-gradient-to-r from-[#FFC107] to-[#E5A100] text-black font-black px-4 py-2.5 rounded-xl shadow-[0_4px_15px_rgba(255,193,7,0.3)] hover:brightness-110 active:scale-95 transition-all text-sm">
+                                <i class="fa-solid fa-table-columns"></i> Tableau de bord
+                            </a>
+                        @else
+                            <a href="{{ route('client.pending') }}" class="flex items-center gap-2 bg-gradient-to-r from-[#FFC107] to-[#E5A100] text-black font-black px-4 py-2.5 rounded-xl shadow-[0_4px_15px_rgba(255,193,7,0.3)] hover:brightness-110 active:scale-95 transition-all text-sm">
+                                <i class="fa-solid fa-clock-rotate-left"></i> Statut
+                            </a>
+                        @endif
+                        <form action="{{ route('logout') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="flex items-center justify-center w-10 h-10 bg-zinc-900 hover:bg-red-500/10 text-zinc-400 hover:text-red-500 border border-zinc-700 hover:border-red-500/50 rounded-xl transition-all" title="Se déconnecter">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            </button>
+                        </form>
+                    @else
+                        @if (Route::has('login'))
+                            <a href="{{ route('login') }}" class="flex items-center gap-2 bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-700 px-4 py-2.5 rounded-xl text-sm font-bold transition-all hover:border-[#FFC107]">
+                                <i class="fa-solid fa-right-to-bracket text-zinc-400"></i> Se Connecter
+                            </a>
+                        @endif
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="hidden sm:flex items-center gap-2 bg-gradient-to-r from-[#FFC107] to-[#E5A100] text-black font-black px-4 py-2.5 rounded-xl shadow-[0_4px_15px_rgba(255,193,7,0.3)] hover:brightness-110 active:scale-95 transition-all text-sm">
+                                S'inscrire
+                            </a>
+                        @endif
+                    @endauth
+                </div>
+            </div>
+        </div>
+        
+        {{-- Category Bar --}}
+        <div class="bg-zinc-900/90 border-t border-zinc-800/80 px-4 py-2.5">
+            <div class="max-w-7xl mx-auto flex items-center justify-between text-xs gap-4 overflow-x-auto">
+                <nav class="flex items-center gap-6 text-zinc-300 font-semibold whitespace-nowrap">
+                    <a href="{{ route('guest.article.search') }}" class="text-lion-accent hover:underline flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i> Tout le Catalogue
+                    </a>
+                    <a href="#" class="text-amber-400 hover:text-amber-300 font-bold">Devenir Client Pro</a>
                 </nav>
             </div>
         </div>
-    </div>
-    <!-- Navbar End -->
+    </header>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-3-typeahead@4.0.2/bootstrap3-typeahead.min.js"></script>
-
-
-
-
-
-    {{-- <script type="text/javascript">
-        var path = "{{ route('autocomplete') }}";
-        $('input.typeahead').typeahead({
-            source:  function (query, process) {
-            return $.get({{ route('autocomplete') }}, { query: query }, function (data) {
-                    return process(data);
-                });
-            },
-            matcher: function(item) {
-        // Ensure item is a string
-        if (typeof item !== 'string') {
-            item = item.toString();
-        }
-        return item.toLowerCase().indexOf(this.query.toLowerCase()) !== -1;
-    }
-        });
-    </script> --}}
+</body>
+</html>

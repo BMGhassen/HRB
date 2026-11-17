@@ -13,6 +13,6 @@ class LigneCommande extends Model
     }
 
     public function article(){
-        return $this->hasOne(Article::class, 'article_id', 'id');
+        return $this->belongsTo(Article::class, 'article_id', 'id');
     }
 }

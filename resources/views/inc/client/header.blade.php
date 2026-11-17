@@ -1,148 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fr" class="h-full bg-lion-black">
 <head>
-    <meta charset="utf-8">
-    <title>Etablissement Rekik</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Free HTML Templates" name="keywords">
-    <meta content="Free HTML Templates" name="description">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2B Grossiste | Établissement Rekik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="{{ asset('build/shopassets/img/logo_Header.png') }}" type="image/x-icon" />
 
-    <!-- Favicon -->
-    <link
-          rel="icon"
-          href="{{asset('build/assets/img/007.ico')}}"
-          type="image/x-icon"
-        />
-
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Libraries Stylesheet -->
-    <link href="{{asset('build/shopassets/lib/animate/animate.min.css')}}" rel="stylesheet">
-    <link href="{{asset('build/shopassets/lib/owlcarousel/assets/owl.carousel.min.css')}}" rel="stylesheet">
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="{{asset('build/shopassets/css/style.css')}}" rel="stylesheet">
+    @include('inc.theme')
 </head>
+<body class="h-full font-sans antialiased text-white bg-lion-black" x-data="{ userDropdown: false, cartDropdown: false }">
 
-<body>
-    <!-- Topbar Start -->
-    <div class="container-fluid">
-        <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
-            <div class="col-lg-6">
-                <a href="" class="text-decoration-none">
-                    <span class="h1 text-uppercase text-primary bg-dark px-2">Etablissement</span>
-                    <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">Rekik</span>
+    {{-- Top B2B Utility Bar --}}
+    <div class="force-dark bg-lion-ink/90 border-b border-zinc-800 text-[12px] text-zinc-400 py-1.5 px-4">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1.5 text-zinc-300">
+                    <i class="fa-solid fa-truck-fast text-lion-accent"></i>
+                    <span>Livraison Express <strong>24/48h</strong> sur toute la Tunisie</span>
+                </span>
+                <span class="hidden md:inline text-zinc-600">|</span>
+                <span class="hidden md:flex items-center gap-1.5">
+                    <i class="fa-solid fa-phone text-lion-accent"></i>
+                    <span>Service Pro : <strong class="text-white">+216 71 000 000</strong></span>
+                </span>
+            </div>
+
+            <div class="flex items-center gap-3">
+                @include('inc.theme-toggle')
+            @auth
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 bg-zinc-900 border border-zinc-700/80 px-3 py-0.5 rounded-full text-[11px]">
+                    <span class="text-zinc-400">Encours B2B :</span>
+                    <span class="text-emerald-400 font-bold font-mono">
+                        {{ number_format(Auth::user()->client?->encours ?? 0, 3, ',', ' ') }} DT
+                    </span>
+                </div>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+                <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="hover:text-white transition-colors flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Déconnexion</span>
                 </a>
             </div>
-
-            <div class="col-lg-4 col-6 text-left">
-                <form action= "{{ route('client.article.search') }}" method="GET">
-                    @csrf
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Rechercher Par Référence" name="search" required>
-                        {{-- <ul id="suggestions" class="list-group my-2"></ul> --}}
-                        <div class="input-group-append">
-                            <button class="input-group-text bg-transparent text-primary" type="submit">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
+            @endauth
             </div>
-
         </div>
     </div>
-    <!-- Topbar End -->
 
-
-    <!-- Navbar Start -->
-    <div class="container-fluid bg-dark mb-30">
-        <div class="row px-xl-5">
-            <div class="col-lg-3 d-none d-lg-block">
-                <a class="btn d-flex align-items-center justify-content-between bg-primary w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; padding: 0 30px;">
-                    <h6 class="text-dark m-0"><i class="fa fa-bars mr-2"></i></h6>
-                    <i class="fa fa-angle-down text-dark"></i>
+    {{-- Main Navbar --}}
+    <header class="force-dark text-white bg-lion-card border-b border-zinc-800 sticky top-0 z-40 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between gap-6">
+                
+                {{-- ── Frameless Large Lion Logo ───────────────────────── --}}
+                <a href="{{ url('/') }}" class="flex-shrink-0 flex items-center gap-3.5 group">
+                    {{-- Big Lion Head without any frame/box --}}
+                    <img src="{{ asset('build/assets/img/007.png') }}" 
+                         alt="Logo Lion Ets. Habib Rekik" 
+                         class="h-14 sm:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_15px_rgba(255,193,7,0.35)]">
+                    
+                    {{-- Typography aligned with the bigger logo --}}
+                    <div class="hidden sm:block">
+                        <h1 class="text-white font-black text-xl sm:text-2xl tracking-tight leading-none group-hover:text-lion-accent transition-colors">
+                            ETS. HABIB <span class="text-lion-accent">REKIK</span>
+                        </h1>
+                        <span class="text-lion-accent-light font-bold text-[11px] tracking-[0.16em] uppercase block mt-1">
+                            Pièces Auto en Gros
+                        </span>
+                    </div>
                 </a>
-                {{-- <nav class="collapse position-absolute navbar navbar-vertical navbar-light align-items-start p-0 bg-light" id="navbar-vertical" style="width: calc(100% - 30px); z-index: 999;">
-                    <div class="navbar-nav w-100">
-                        <div class="nav-item dropdown dropright">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Dresses <i class="fa fa-angle-right float-right mt-1"></i></a>
-                            <div class="dropdown-menu position-absolute rounded-0 border-0 m-0">
-                                <a href="" class="dropdown-item">Men's Dresses</a>
-                                <a href="" class="dropdown-item">Women's Dresses</a>
-                                <a href="" class="dropdown-item">Baby's Dresses</a>
-                            </div>
-                        </div>
-                        <a href="" class="nav-item nav-link">Shirts</a>
-                        <a href="" class="nav-item nav-link">Jeans</a>
-                        <a href="" class="nav-item nav-link">Swimwear</a>
-                        <a href="" class="nav-item nav-link">Sleepwear</a>
-                        <a href="" class="nav-item nav-link">Sportswear</a>
-                        <a href="" class="nav-item nav-link">Jumpsuits</a>
-                        <a href="" class="nav-item nav-link">Blazers</a>
-                        <a href="" class="nav-item nav-link">Jackets</a>
-                        <a href="" class="nav-item nav-link">Shoes</a>
-                    </div>
-                </nav> --}}
-            </div>
-            <div class="col-lg-9">
-                <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-0">
-                    <a href="" class="text-decoration-none d-block d-lg-none">
-                        <span class="h1 text-uppercase text-dark bg-light px-2">Multi</span>
-                        <span class="h1 text-uppercase text-light bg-primary px-2 ml-n1">Shop</span>
-                    </a>
-                    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">
-                            <a href="/client/dashboard" class="nav-item nav-link active">Home</a>
-                            <a href="#" class="nav-item nav-link">Produits</a>
-                            <a href="detail.html" class="nav-item nav-link">Nos Partenaires</a>
-                            <a href="detail.html" class="nav-item nav-link">Nos Marques</a>
-                            <a href="detail.html" class="nav-item nav-link">News</a>
-                            <a href="detail.html" class="nav-item nav-link">à propos</a>
 
-                            <a href="contact.html" class="nav-item nav-link">Contact</a>
-                        </div>
-                        <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
-                            {{-- <a href="{{ route('client.panier') }}" class="btn px-0 ml-3">
-                                <i class="fas fa-shopping-cart text-primary"></i>
-                                <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>
-                            </a> --}}
-                            {{-- <a class="nav-item dropdown">
-                                <button class="btn px-0 ml-3 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-user text-primary"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                  <li><a class="dropdown-item" href="#">Action</a></li>
-                                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                                  <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                </ul>
-                            </a> --}}
-                            <button type="button" class="btn btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fas fa-user text-primary"></i></button>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <button class="dropdown-item" type="button">Mon Profil</button>
-                                {{-- <button class="dropdown-item" type="button">Se déconnecter</button> --}}
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                    onclick="event.preventDefault();
-                                                document.getElementById('logout-form').submit();">
-                                    {{ __('Se déconnecter') }}
-                                </a>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
+                {{-- Search Bar --}}
+                <form action="{{ route('client.article.search') }}" method="GET" class="flex-1 max-w-2xl hidden md:block">
+                    <div class="flex items-stretch bg-zinc-900 border border-zinc-700 rounded-xl overflow-hidden focus-within:border-[#FFC107] focus-within:ring-1 focus-within:ring-[#FFC107] transition-all">
+                        <select name="category" class="bg-zinc-800 text-zinc-300 border-r border-zinc-700 px-4 py-3 text-sm font-bold focus:outline-none cursor-pointer hidden lg:block">
+                            <option value="all">Toutes les Pièces</option>
+                        </select>
+                        <input type="text" name="search" placeholder="Rechercher référence SKU (ex: 001 AZ2011), Désignation..." value="{{ $searchTerm ?? '' }}" required
+                               class="w-full bg-transparent text-white placeholder-zinc-500 text-sm px-4 py-3 focus:outline-none">
+                        <button type="submit" class="bg-[#FFC107] hover:bg-[#FFD54F] text-black font-black px-6 py-3 transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </form>
+
+                {{-- Actions --}}
+                <div class="flex items-center gap-3">
+                    @auth
+                    {{-- User Dropdown --}}
+                    <div class="relative" @click.away="userDropdown = false">
+                        <button @click="userDropdown = !userDropdown" 
+                                class="flex items-center gap-2.5 p-2 sm:px-3.5 sm:py-2.5 rounded-xl bg-zinc-900 border border-zinc-700 text-zinc-200 hover:text-white hover:border-[#FFC107] transition-all">
+                            <div class="w-7 h-7 rounded-lg bg-[#FFC107] text-black flex items-center justify-center font-bold text-xs">
+                                <i class="fa-solid fa-user-tie"></i>
                             </div>
+                            <div class="hidden sm:block text-left text-xs leading-tight">
+                                <span class="text-[10px] text-zinc-400 block">Espace Client</span>
+                                <span class="font-bold text-white">{{ Auth::user()->name }}</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-zinc-400 ml-1"></i>
+                        </button>
+
+                        <div x-show="userDropdown" x-transition style="display: none;"
+                             class="absolute right-0 mt-2 w-56 bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl py-2 z-50 text-xs">
+                            <div class="px-4 py-2 border-b border-zinc-800">
+                                <p class="text-zinc-400 text-[10px] uppercase font-bold">Connecté en tant que :</p>
+                                <p class="font-bold text-white truncate">{{ Auth::user()->email }}</p>
+                            </div>
+                            <a href="{{ route('client.commandes') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-zinc-300 hover:bg-zinc-800 hover:text-lion-accent">
+                                <i class="fa-solid fa-file-invoice text-zinc-400"></i> Mes Factures & Commandes
+                            </a>
                         </div>
                     </div>
+                    @endauth
+
+                    {{-- Pro Cart Button --}}
+                    <a href="{{ route('client.panier') }}" class="relative flex items-center gap-2.5 bg-gradient-to-r from-[#FFC107] to-[#E5A100] text-black font-black px-4 py-2.5 rounded-xl shadow-[0_4px_15px_rgba(255,193,7,0.3)] hover:brightness-110 active:scale-95 transition-all">
+                        <i class="fa-solid fa-cart-shopping text-base"></i>
+                        <span class="hidden sm:inline text-xs">Panier</span>
+                        @php
+                            $cartCount = 0;
+                            if (Auth::check()) {
+                                $commande = \App\Models\Commande::where('client_id', Auth::id())->where('etat', 'Brouillon')->first();
+                                if ($commande) {
+                                    $cartCount = $commande->ligneCommandes->count();
+                                }
+                            }
+                        @endphp
+                        <span class="bg-black text-[#FFC107] font-extrabold text-[11px] px-2 py-0.5 rounded-full border border-black/40">{{ $cartCount }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        {{-- Category Bar --}}
+        <div class="bg-zinc-900/90 border-t border-zinc-800/80 px-4 py-2.5">
+            <div class="max-w-7xl mx-auto flex items-center justify-between text-xs gap-4 overflow-x-auto">
+                <nav class="flex items-center gap-6 text-zinc-300 font-semibold whitespace-nowrap">
+                    <a href="{{ route('client.article.search') }}" class="text-lion-accent hover:underline flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i> Tout le Catalogue
+                    </a>
+                    <a href="#" class="hover:text-lion-accent">Nouveautés</a>
                 </nav>
             </div>
         </div>
-    </div>
-    <!-- Navbar End -->
+    </header>

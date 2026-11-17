@@ -8,12 +8,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link
           rel="icon"
-          href="{{asset('build/assets/img/007.ico')}}"
+          href="{{asset('build/assets/img/007.png')}}"
           type="image/x-icon"
         />
     <title>Etablissement Rekik</title>
     <!---Custom CSS File--->
     <link rel="stylesheet" href="{{asset('build/assets/css/style.css')}}">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Scripts -->

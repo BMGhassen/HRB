@@ -1,0 +1,14 @@
+# PM2 config for the queue worker (sends orders to iDempiere, runs sync jobs).
+# Start with:  pm2 start queue-worker.yml
+# Locally you can also just run:  php artisan queue:work --tries=5
+apps:
+    - name: hrb2b-queue-worker
+      script: artisan
+      exec_mode: fork
+      interpreter: php
+      instances: 1
+      args:
+          - queue:work
+          - --tries=5
+          - --sleep=1
+          - --max-time=3600

@@ -1,79 +1,59 @@
-  <!-- Footer Start -->
-  <div class="container-fluid bg-dark justify-content-center text-secondary mt-5 pt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-12">
-            <div class="row px-xl-5 pt-5">
-                <h5 class="text-primary text-uppercase mb-4">Contactez nous</h5>
-            </div>
-            <div class="row px-xl-5 pt-5">
-                <div class="col-lg-8 col-md-12 mb-5 pr-3 pr-xl-5">
-                    <a class="mb-2" href="https://www.google.com/maps/place/Etablissement+REKIK+HABIB/@36.7859002,10.078516,17z/data=!3m1!4b1!4m6!3m5!1s0x12fd2f41c9c4ee0d:0xda7c17b6d4864637!8m2!3d36.7859002!4d10.0810909!16s%2Fg%2F11fn50sxct?authuser=0&entry=ttu" target="_blank">
-                        <i class="fa fa-map-marker-alt text-primary mr-3"></i>
-                        Rond point Ben Mahmoud Résidence Boubli , Lot 86 , 1082 EL Agba Tunis
-                    </a>
-                    <br>
-                    <a class="mb-2" href="mailto:contact@etablissement-rekik.com" target="_blank"><i class="fa fa-envelope text-primary mr-3"></i>contact@etablissement-rekik.com</a>
-                    <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-3"></i>(+216) 54 790 790</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt text-primary mr-3"></i>(+216) 58 534 535</p>
-                    <a href="https://www.facebook.com/profile.php?id=61555440732992" target="_blank"><i class="fab fa-facebook-f text-primary mr-3"></i>Etablissement REKIK</a>
+    {{-- Modern Dark Footer --}}
+    <footer class="bg-lion-ink border-t border-zinc-800 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div>
+                    <h5 class="text-lion-accent font-black uppercase tracking-wider mb-4">Établissement Rekik</h5>
+                    <p class="text-zinc-400 text-sm leading-relaxed mb-4">
+                        Distributeur officiel de pièces automobiles en gros. Qualité, stock et service rapide.
+                    </p>
                 </div>
-                <div class="col-lg-4 col-md-12 mb-5 pr-3 pr-xl-5">
-                    <h7>Service Gros:</h7><p class="mb-2">(+216) 58 534 535</p>
-                    <h7>Service Details:</h7><p class="mb-2">(+216) 56 278 776</p>
-                    <h7>Fax:</h7><p class="mb-2">(+216) 32 404 424</p>
+                <div>
+                    <h5 class="text-white font-bold mb-4">Contactez-nous</h5>
+                    <ul class="space-y-3 text-sm text-zinc-400">
+                        <li>
+                            <a href="https://www.google.com/maps/place/Etablissement+REKIK+HABIB/@36.7859002,10.078516,17z" target="_blank" class="hover:text-lion-accent transition-colors flex items-start gap-2">
+                                <i class="fa fa-map-marker-alt text-lion-accent mt-1"></i>
+                                <span>Rond point Ben Mahmoud Résidence Boubli, Lot 86, 1082 EL Agba Tunis</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:contact@etablissement-rekik.com" class="hover:text-lion-accent transition-colors flex items-center gap-2">
+                                <i class="fa fa-envelope text-lion-accent"></i> contact@etablissement-rekik.com
+                            </a>
+                        </li>
+                        <li class="flex items-center gap-2"><i class="fa fa-phone-alt text-lion-accent"></i> (+216) 54 790 790</li>
+                        <li class="flex items-center gap-2"><i class="fa fa-phone-alt text-lion-accent"></i> (+216) 58 534 535</li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-white font-bold mb-4">Service Gros & Fax</h5>
+                    <ul class="space-y-3 text-sm text-zinc-400">
+                        <li class="flex items-center gap-2"><i class="fa fa-phone text-lion-accent"></i> Gros : (+216) 58 534 535</li>
+                        <li class="flex items-center gap-2"><i class="fa fa-fax text-lion-accent"></i> Fax : (+216) 32 404 424</li>
+                    </ul>
                 </div>
             </div>
+            <div class="border-t border-zinc-800 mt-12 pt-8 text-center text-zinc-500 text-xs">
+                &copy; {{ date('Y') }} – ABS – Tous droits réservés.
+            </div>
         </div>
-        <div class="col col-lg-4 col-md-12">
-                <img src="{{asset('build/dashassets/img/tes.jpg')}}"/>
-        </div>
-    </div>
-    <div class="row border-top mx-xl-5 py-4" style="border-color: rgba(256, 256, 256, .1) !important; ">
-        <div class="col-md px-xl-0">
-            <p class="text-center text-primary">
-                &copy; 2024 – Ets. REKIK Habib – tous les droits sont réservés.
-            </p>
-        </div>
-    </div>
-</div>
-<!-- Footer End -->
+    </footer>
 
 
-<!-- Back to Top -->
-<a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+<!-- jQuery (needed for AJAX in cart) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
-<!-- JavaScript Libraries -->
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-<script src="{{asset('lib/easing/easing.min.js')}}"></script>
-<script src="{{asset('lib/owlcarousel/owl.carousel.min.js')}}"></script>
-
-<!-- Contact Javascript File -->
-<script src="{{asset('mail/jqBootstrapValidation.min.js')}}"></script>
-<script src="{{asset('mail/contact.js')}}"></script>
-
-<!-- Template Javascript -->
-<script src="{{asset('js/main.js')}}"></script>
-
+@if(session()->has('erp_payloads'))
 <script>
-    $(document).ready(function() {
-      $('.btn-minus').click(function (e) {
-        e.preventDefault();
-        var $qty = $(this).closest('.quantity').find('input[name="qte"]');
-        var currentVal = parseInt($qty.val());
-        if (currentVal > 1) {
-          $qty.val(currentVal - 1);
-        }
-      });
-      $('.btn-plus').click(function (e) {
-        e.preventDefault();
-        var $qty = $(this).closest('.quantity').find('input[name="qte"]');
-        var currentVal = parseInt($qty.val());
-        $qty.val(currentVal + 1);
-      });
+    console.group('📦 iDempiere ERP Sync Payloads');
+    const payloads = @json(session()->pull('erp_payloads'));
+    payloads.forEach(p => {
+        console.log(`%c[${p.type}]`, 'color: #FFC107; font-weight: bold;', p.data);
     });
+    console.groupEnd();
 </script>
-</body>
+@endif
 
+</body>
 </html>

@@ -25,7 +25,9 @@ x-app: &app
 services:
   app:
     <<: *app
-    command: sh -c "composer install --no-interaction && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
+    # php -S directly (not `artisan serve`): artisan serve starts a child process that only
+    # receives a few env vars, so DB_HOST=mysql above would be lost and pages would use .env.
+    command: sh -c "composer install --no-interaction && php artisan migrate --force && cd public && PHP_CLI_SERVER_WORKERS=4 php -S 0.0.0.0:8000 ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"
     ports:
       - "8000:8000"
 

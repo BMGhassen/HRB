@@ -161,7 +161,17 @@ class ArticleController extends Controller
      */
     public function examples()
     {
-        $products = Article::where('sel', '1')->paginate(12);
+        // Featured ("Vedette") articles first; when none are marked, show the most
+        // recently updated articles that are in stock, so the home page is never empty.
+        $products = Article::where('sel', '1')->latest('updated_at')->take(12)->get();
+
+        if ($products->isEmpty()) {
+            $products = Article::where('qte_stock', '>', 0)
+                ->latest('updated_at')
+                ->take(12)
+                ->get();
+        }
+
         return view('welcome', compact('products'));
     }
 }

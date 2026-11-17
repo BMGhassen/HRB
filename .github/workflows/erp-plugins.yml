@@ -1,0 +1,97 @@
+name: iDempiere plugins
+
+on:
+  push:
+    branches: [main]
+    paths: ['erp-plugins/**', '.github/workflows/erp-plugins.yml']
+  pull_request:
+    paths: ['erp-plugins/**', '.github/workflows/erp-plugins.yml']
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy to the iDempiere VM (restarts iDempiere for about a minute)
+        type: boolean
+        default: false
+
+# Never run two deployments at the same time.
+concurrency:
+  group: erp-plugins-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IDEMPIERE_HOME: ${{ vars.IDEMPIERE_HOME || '/opt/idempiere-server' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up SSH to the VM
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/id_vm && chmod 600 ~/.ssh/id_vm
+          echo "${{ secrets.VM_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          printf 'Host vm\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/id_vm\n' \
+            "${{ secrets.VM_HOST }}" "${{ secrets.VM_USER }}" > ~/.ssh/config
+
+      # Compile against the exact jars running on the VM. Cached until IDEMPIERE_BUILD changes
+      # (set that variable to anything new after upgrading iDempiere on the VM).
+      - name: Cache iDempiere jars
+        id: jars
+        uses: actions/cache@v4
+        with:
+          path: idempiere-plugins
+          key: idempiere-jars-${{ vars.IDEMPIERE_BUILD || 'initial' }}
+
+      - name: Download iDempiere jars from the VM
+        if: steps.jars.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p idempiere-plugins
+          ssh vm "cd '$IDEMPIERE_HOME/plugins' && tar czf - ." | tar xzf - -C idempiere-plugins
+
+      - name: Build plugins
+        run: |
+          for manifest in erp-plugins/*/META-INF/MANIFEST.MF; do
+            bash erp-plugins/build.sh "$(dirname "$(dirname "$manifest")")" idempiere-plugins dist
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: erp-plugins
+          path: dist/*.jar
+
+  deploy:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: erp-plugins
+          path: dist
+
+      - name: Set up SSH to the VM
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.VM_SSH_KEY }}" > ~/.ssh/id_vm && chmod 600 ~/.ssh/id_vm
+          echo "${{ secrets.VM_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          printf 'Host vm\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/id_vm\n' \
+            "${{ secrets.VM_HOST }}" "${{ secrets.VM_USER }}" > ~/.ssh/config
+
+      - name: Install on the VM (rolls back automatically if iDempiere does not come back)
+        env:
+          IDEMPIERE_SERVICE: ${{ vars.IDEMPIERE_SERVICE || 'idempiere' }}
+        run: |
+          scp erp-plugins/deploy-on-vm.sh dist/*.jar vm:/tmp/
+          for jar in dist/*.jar; do
+            ssh vm "IDEMPIERE_HOME='$IDEMPIERE_HOME' IDEMPIERE_SERVICE='$IDEMPIERE_SERVICE' bash /tmp/deploy-on-vm.sh /tmp/$(basename "$jar")"
+          done

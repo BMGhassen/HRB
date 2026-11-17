@@ -37,7 +37,7 @@
                             </span>
                         @elseif($p->qte_stock > 0)
                             <span class="text-amber-400 bg-amber-950/60 border border-amber-800/50 text-[11px] font-bold px-2 py-0.5 rounded-full">
-                                {{ $p->qte_stock }} restants
+                                {{ (int) $p->qte_stock }} {{ $p->qte_stock > 1 ? 'restants' : 'restant' }}
                             </span>
                         @else
                             <span class="text-red-400 bg-red-950/60 border border-red-800/50 text-[11px] font-bold px-2 py-0.5 rounded-full">

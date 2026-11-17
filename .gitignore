@@ -18,9 +18,11 @@ yarn-error.log
 /.idea
 /.vscode
 
-# Build archive (hundreds of MB, rebuilt by 
-pm run build)
+# Build archive (hundreds of MB, rebuilt by npm run build)
 /public/build.zip
 
 # Import files: may contain client data, never commit them
 /storage/csvFiles/
+# iDempiere plugin build output (CI and local)
+/dist/
+/idempiere-plugins/

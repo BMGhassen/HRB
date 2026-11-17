@@ -5,9 +5,9 @@
 @section('content')
 
 {{-- ── Header & Action Buttons ──────────────────────────────────────────── --}}
-<div class="flex items-center justify-between mb-6">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
     <div>
-        <h1 class="text-2xl font-black text-white">
+        <h1 class="text-xl sm:text-2xl font-black text-white">
             <span class="inline-flex items-center bg-[#FFC107] text-black text-xs font-black px-2 py-0.5 rounded mr-2">
                 <i class="fa fa-bolt mr-1"></i> HR-B2B
             </span>
@@ -15,7 +15,7 @@
         </h1>
         <p class="text-zinc-500 text-sm mt-1">Gestion centralisée du stock et synchronisation directe avec iDempiere Cloud ERP</p>
     </div>
-    <div class="flex gap-2">
+    <div class="flex flex-wrap gap-2">
         <button type="button" id="quickStockBtn" onclick="quickStockSync()"
            class="bg-green-600 hover:bg-green-700 text-white font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2">
             <i class="fa fa-boxes-stacked" id="quickStockIcon"></i> <span id="quickStockText">Actualiser Stock</span>
@@ -189,15 +189,13 @@
     </div>
 
     {{-- Pagination Footer --}}
-    <div class="bg-zinc-900 border-t border-zinc-800 px-4 py-3 flex justify-between items-center">
+    <div class="bg-zinc-900 border-t border-zinc-800 px-4 py-3 flex flex-col sm:flex-row gap-3 justify-between items-center">
         <div class="text-xs text-zinc-500">
             Affichage de <strong class="text-zinc-300">{{ $articles->firstItem() ?? 0 }}</strong>
             à <strong class="text-zinc-300">{{ $articles->lastItem() ?? 0 }}</strong>
-            sur <strong class="text-white">{{ number_format($articles->total()) }}</strong> pièces auto
+            sur <strong class="text-white">{{ number_format($articles->total(), 0, ',', ' ') }}</strong> pièces auto
         </div>
-        <div class="text-zinc-400">
-            {{ $articles->links('pagination::bootstrap-5') }}
-        </div>
+        {{ $articles->onEachSide(1)->links('vendor.pagination.dark') }}
     </div>
 </div>
 

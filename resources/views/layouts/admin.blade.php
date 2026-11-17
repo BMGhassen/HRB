@@ -31,10 +31,13 @@
     
     <link rel="icon" href="{{ asset('build/assets/img/007.png') }}" type="image/x-icon">
 </head>
-<body class="h-full bg-[#0A0D17] text-zinc-300 font-sans antialiased overflow-hidden flex">
+<body class="h-full bg-[#0A0D17] text-zinc-300 font-sans antialiased overflow-hidden flex" x-data="{ menu: false }" @keydown.escape.window="menu = false">
+    <!-- Mobile: dark overlay behind the open menu -->
+    <div x-show="menu" x-transition.opacity @click="menu = false" class="fixed inset-0 bg-black/60 z-30 lg:hidden" style="display: none"></div>
 
-    <!-- Sidebar -->
-    <aside class="w-64 bg-zinc-950 border-r border-zinc-800 flex flex-col flex-shrink-0">
+    <!-- Sidebar (off-canvas below lg) -->
+    <aside class="fixed inset-y-0 left-0 z-40 w-64 bg-zinc-950 border-r border-zinc-800 flex flex-col flex-shrink-0 transform transition-transform duration-200 lg:static lg:translate-x-0"
+           :class="menu ? 'translate-x-0' : '-translate-x-full'">
         <!-- Logo -->
         <div class="h-20 flex items-center justify-center border-b border-zinc-800">
             <a href="{{ url('/admin/dashboard') }}">
@@ -43,7 +46,7 @@
         </div>
         
         <!-- Navigation -->
-        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar">
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar" @click="if ($event.target.closest('a')) menu = false">
             <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ Request::is('admin/dashboard') ? 'bg-zinc-800 text-[#FFC107] font-bold' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50' }}">
                 <i class="fa-solid fa-gauge w-5 text-center"></i>
                 <span>Tableau de Bord</span>
@@ -94,9 +97,12 @@
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
         
         <!-- Top Navbar -->
-        <header class="h-16 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-6 flex-shrink-0 shadow-sm z-10">
-            <div class="text-xl font-bold text-white flex items-center gap-2">
-                <span class="text-[#FFC107]">Admin</span> Portal
+        <header class="h-16 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-4 lg:px-6 flex-shrink-0 shadow-sm z-10">
+            <div class="text-xl font-bold text-white flex items-center gap-3">
+                <button type="button" @click="menu = true" class="lg:hidden w-9 h-9 rounded-lg bg-zinc-800 text-zinc-300 hover:text-[#FFC107] flex items-center justify-center" aria-label="Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <span><span class="text-[#FFC107]">Admin</span> Portal</span>
             </div>
             
             <div class="flex items-center gap-4">
@@ -104,7 +110,7 @@
                     <div class="w-8 h-8 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[#FFC107]">
                         <i class="fa-solid fa-user"></i>
                     </div>
-                    <span class="text-sm font-semibold text-white">{{ Auth::user()->name ?? 'Admin' }}</span>
+                    <span class="hidden sm:inline text-sm font-semibold text-white">{{ Auth::user()->name ?? 'Admin' }}</span>
                 </div>
                 
                 <div class="h-6 w-px bg-zinc-700"></div>
@@ -112,14 +118,14 @@
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="text-sm text-zinc-400 hover:text-red-400 transition-colors flex items-center gap-2">
-                        <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
+                        <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden sm:inline">Déconnexion</span>
                     </button>
                 </form>
             </div>
         </header>
         
         <!-- Page Content -->
-        <main class="flex-1 overflow-y-auto p-6 scroll-smooth">
+        <main class="flex-1 overflow-y-auto p-4 lg:p-6 scroll-smooth">
             @yield('content')
         </main>
         

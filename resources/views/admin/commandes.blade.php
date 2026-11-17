@@ -11,7 +11,7 @@
     <p class="text-zinc-500 text-sm mt-1">Liste de toutes les commandes clients</p>
 </div>
 
-<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-6 overflow-x-auto">
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 mb-6 overflow-x-auto">
     <table class="w-full text-sm text-zinc-300">
         <thead class="bg-zinc-800 text-[#FFC107] uppercase text-xs">
             <tr>

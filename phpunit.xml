@@ -21,8 +21,13 @@
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
-        <!-- <env name="DB_CONNECTION" value="sqlite"/> -->
-        <!-- <env name="DB_DATABASE" value=":memory:"/> -->
+        <!-- Tests use a throwaway in-memory SQLite DB: never the real MySQL (RefreshDatabase wipes it) -->
+        <env name="DB_CONNECTION" value="sqlite" force="true"/>
+        <env name="DB_DATABASE" value=":memory:" force="true"/>
+        <!-- Fake iDempiere: tests must never reach the real VM (HTTP is faked, stray requests fail) -->
+        <env name="IDEMPIERE_URL" value="http://erp.test/api/v1" force="true"/>
+        <env name="IDEMPIERE_USERNAME" value="test-user" force="true"/>
+        <env name="IDEMPIERE_PASSWORD" value="test-pass" force="true"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="QUEUE_CONNECTION" value="sync"/>

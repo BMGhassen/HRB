@@ -1,0 +1,78 @@
+# Local dev stack:  docker compose up -d   ->  http://localhost:8000
+#
+# Uses your .env for everything (iDempiere URL and login included) except the
+# database, which points at the MySQL container below.
+# Careful: with a real IDEMPIERE_URL, validated orders create real documents in iDempiere.
+
+x-app: &app
+  build: docker/php
+  image: hrb2b-php
+  volumes:
+    - .:/var/www/html
+  env_file: .env
+  environment:
+    DB_CONNECTION: mysql
+    DB_HOST: mysql
+    DB_PORT: 3306
+    DB_DATABASE: hrb2b
+    DB_USERNAME: hrb2b
+    DB_PASSWORD: hrb2b
+  depends_on:
+    mysql:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  app:
+    <<: *app
+    command: sh -c "composer install --no-interaction && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"
+    ports:
+      - "8000:8000"
+
+  # Sends validated orders to iDempiere (SendCommandeToErp job)
+  queue:
+    <<: *app
+    command: php artisan queue:work --sleep=3 --tries=5
+    depends_on:
+      app:
+        condition: service_started
+
+  # Runs the stock / catalog / client syncs on their schedule
+  scheduler:
+    <<: *app
+    command: php artisan schedule:work
+    depends_on:
+      app:
+        condition: service_started
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: hrb2b
+      MYSQL_USER: hrb2b
+      MYSQL_PASSWORD: hrb2b
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"   # 3307 so it does not clash with Laragon's MySQL
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  # Front-end assets with hot reload:  docker compose --profile assets up -d
+  vite:
+    image: node:20
+    profiles: [assets]
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+
+volumes:
+  mysql-data:

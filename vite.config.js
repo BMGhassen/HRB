@@ -12,4 +12,6 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    // Inside Docker the dev server listens on 0.0.0.0; the browser must still use localhost
+    server: { hmr: { host: 'localhost' } },
 });

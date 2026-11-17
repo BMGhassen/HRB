@@ -133,6 +133,17 @@
                     </a>
                 </div>
             </div>
+
+            {{-- Search Bar (phones: the one above is hidden below md) --}}
+            <form action="{{ route('client.article.search') }}" method="GET" class="md:hidden mt-3">
+                <div class="flex items-stretch bg-zinc-900 border border-zinc-700 rounded-xl overflow-hidden focus-within:border-[#FFC107] focus-within:ring-1 focus-within:ring-[#FFC107] transition-all">
+                    <input type="text" name="search" placeholder="Référence SKU, désignation..." value="{{ $searchTerm ?? '' }}" required
+                           class="w-full bg-transparent text-white placeholder-zinc-500 text-sm px-4 py-2.5 focus:outline-none">
+                    <button type="submit" class="bg-[#FFC107] hover:bg-[#FFD54F] text-black font-black px-4 transition-colors" aria-label="Rechercher">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </form>
         </div>
         
         {{-- Category Bar --}}

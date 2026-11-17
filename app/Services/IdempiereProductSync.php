@@ -86,6 +86,18 @@ class IdempiereProductSync
                     ];
                 });
 
+                // A failed price/stock call must stop the sync: otherwise every product in
+                // this batch would be saved with price 0 and stock 0.
+                foreach (['prices', 'stocks'] as $part) {
+                    $res = $poolResponses[$part];
+                    if ($res instanceof \Throwable) {
+                        throw new Exception("iDempiere {$part} request failed: " . $res->getMessage());
+                    }
+                    if (!$res->successful()) {
+                        throw new Exception("iDempiere {$part} request failed ({$res->status()}) on page {$page}");
+                    }
+                }
+
                 // Parse Parallel Prices
                 $prices = [];
                 $priceRecords = $poolResponses['prices']->json('records') ?? [];
@@ -111,7 +123,8 @@ class IdempiereProductSync
                     $desc     = $row['Description'] ?? $row['description'] ?? '';
                     $category = $row['M_Product_Category_ID']['identifier'] ?? null;
 
-                    if (!$sku) {
+                    // erp_product_id is the key we match on: without it (or a SKU) we can't sync
+                    if (!$sku || !$pid) {
                         $report['skipped']++;
                         continue;
                     }
@@ -119,7 +132,7 @@ class IdempiereProductSync
                     $report['total']++;
                     $bulkData[] = [
                         'ref'            => $sku,
-                        'erp_product_id' => $pid ?: null,
+                        'erp_product_id' => $pid,
                         'designation'    => $name,
                         'description'    => $desc ?: $name,
                         'erp_category'   => $category,
@@ -135,10 +148,12 @@ class IdempiereProductSync
 
                 // Single bulk SQL query
                 if (!$dryRun && !empty($bulkData)) {
+                    // Match on erp_product_id: it is the only UNIQUE key (ref is not), and it is
+                    // what MySQL's ON DUPLICATE KEY already used in practice.
                     Article::upsert(
                         $bulkData,
-                        ['ref'],
-                        ['erp_product_id', 'designation', 'description', 'erp_category', 'qte_stock', 'prix', 'erp_synced_at', 'updated_at']
+                        ['erp_product_id'],
+                        ['ref', 'designation', 'description', 'erp_category', 'qte_stock', 'prix', 'erp_synced_at', 'updated_at']
                     );
                 }
 
@@ -201,6 +216,12 @@ class IdempiereProductSync
                         '$top'    => 100,
                         '$skip'   => ($page - 1) * 100
                     ]);
+
+                // A failed page must abort: with a partial map, the "zero out" step below
+                // would set stock to 0 for every article on the pages we never read.
+                if (!$response->successful()) {
+                    throw new Exception("m_storageonhand page {$page} failed ({$response->status()})");
+                }
 
                 $records = $response->json('records') ?? [];
 

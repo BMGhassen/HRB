@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: ListeFactureForm
+Bundle-SymbolicName: ListeFactureForm;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: ListeFactureForm
+Import-Package: 
+ org.adempiere.webui.panel,
+ org.compiere.util,
+ org.osgi.framework;version="1.3.0",
+ org.zkoss.zk;version="[10.0.0,11.0.0)",
+ org.zkoss.zk.ui,
+ org.zkoss.zk.ui.event,
+ org.zkoss.zk.ui.util,
+ org.zkoss.zul
+Require-Bundle: org.adempiere.ui.zk,
+ org.adempiere.base
+Bundle-ActivationPolicy: lazy
+Export-Package: listeform
+Service-Component: ListeFactureForm.xml

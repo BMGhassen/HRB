@@ -60,8 +60,7 @@
           </li>
           <li class="nav-item active">
             <a
-              data-bs-toggle="collapse"
-              href="#dashboard"
+              href="{{route('commandes')}}"
               class="collapsed"
               aria-expanded="false"
             >

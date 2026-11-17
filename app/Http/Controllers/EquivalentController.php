@@ -5,76 +5,37 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\equivalent;
 use Illuminate\Http\Request;
+use App\Models\Origin;
+use Exception;
+use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use App\Jobs\ImportEquivalent;
+use Illuminate\Support\Facades\Log;
+
 
 class EquivalentController extends Controller
 {
     //
 
-    public function importCSV(Request $request)
-    {   ini_set('max_execution_time', 1800);
-        $request->validate([
-            'import_csv1' => 'required',
-            'prefix' => 'required'
-        ]);
-
-        //  dd($request->prefix);
-        //read csv file and skip data
-        $file = $request->file('import_csv1');
-        $handle = fopen($file->path(), 'r');
-
-        //skip the header row
-        fgetcsv($handle);
-
-        $chunksize = 25;
-        while(!feof($handle))
-        {
-            $chunkdata = [];
-
-            for($i = 0; $i<$chunksize; $i++)
-            {
-                $data = fgetcsv($handle,0, ';');
-                if($data === false)
-                {
-                    break;
-                }
-                $chunkdata[] = $data;
-            }
-            $this->getchunkdata($chunkdata,$request->prefix);
-
-        }
-        fclose($handle);
-
-        return redirect()->route('articles')->with('success', 'Article updated successfully.');
-    }
-    public function getchunkdata($chunkdata,$prefix)
+     public function importcsv()
     {
-        foreach($chunkdata as $column){
+          $filePath = storage_path("csvFiles/Equiv.CSV");
+         
+        
 
-            $OurRef = $column[0];
-
-            $ref = $column[1];
-            $marque  = $column[2];
-            $articles = Article::where('ref',$prefix." ".$OurRef )->get();
-
-
-            if($articles->isNotEmpty($articles))
-            {
-                $equivalent = equivalent::where('ref',  $ref)->where('marque', $marque)->where('OurRef',$prefix." ".$OurRef)->get();
-          //  dd($article!=null);
-            if ($equivalent->isempty($equivalent))
-            {
-                $equivalent = new equivalent();
-                $equivalent->ref = $ref;
-                $equivalent->OurRef = $prefix." ".$OurRef;
-                $equivalent->marque = $marque;
-                $equivalent->prod_id = $articles->first()->id;
-
-                $equivalent->save();
-            }
-
-            }
-
-
+        if (!file_exists($filePath)) {
+            return back()->with('error', 'Fichier CSV non trouvé.');
         }
+        // Dispatch le job
+        
+       ImportEquivalent::dispatch($filePath);
+       
+            
+        // Log pour vérification
+         //dd($filePath);
+        return back()->with('success', 'Importation lancée en arrière-plan.');
     }
 }

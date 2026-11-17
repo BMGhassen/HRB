@@ -26,11 +26,9 @@ class HomeController extends Controller
     {
         if(Auth::user()->role == "admin"){
             return redirect('/admin/dashboard');
-        }elseif (Auth::user()->role == "client") {
+        } else {
+            // Default: all clients (and newly registered users) go to client dashboard
             return redirect('/client/dashboard');
-        }else{
-            return view('home');
-        };
-
+        }
     }
 }

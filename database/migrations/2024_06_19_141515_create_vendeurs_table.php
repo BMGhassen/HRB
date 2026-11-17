@@ -15,11 +15,8 @@ return new class extends Migration
     {
         Schema::create('vendeurs', function (Blueprint $table) {
             $table->id();
+            $table->string('code');
             $table->string('nom');
-            $table->unsignedBigInteger('user_id');
-            $table->string('email')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('email')->references('email')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,10 +26,6 @@ return new class extends Migration
      */
     public function down(): void
      {
-        Schema::table('vendeurs', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropForeign(['email']);
-        });
         Schema::dropIfExists('vendeurs');
     }
 };

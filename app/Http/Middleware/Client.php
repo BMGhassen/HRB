@@ -16,10 +16,23 @@ class Client
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::user()->role == "client" && Auth::user()->state == "Actif"){
-        return $next($request);
-        }else{
-         return Redirect('/');
+        $user = Auth::user();
+
+        // Admins have their own area — don't send them to the "pending" page
+        if ($user->role === 'admin') {
+            return redirect('/admin/dashboard');
         }
+
+        if ($user->role === 'client' && $user->state === 'Actif') {
+            return $next($request);
+        }
+
+        // Client not yet activated — show the waiting page
+        if ($user->role === 'client') {
+            return redirect()->route('client.pending');
+        }
+
+        // Any other role (e.g. vendeur) has no access to the client area
+        return redirect('/');
     }
 }

@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Client;
 use App\Models\User;
+use App\Models\Vendeur;
 
 return new class extends Migration
 {
@@ -16,11 +17,16 @@ return new class extends Migration
         Schema::create('clients', function (Blueprint $table) {
 
             $table->id();
+            $table->string('code')->unique();
+            $table->string('rs');
+            $table->unsignedBigInteger('tel');
+            $table->string('MatF');
             $table->string('nom');
-            $table->unsignedBigInteger('user_id');
+            $table->string('resp');
+            $table->string('Adresse');
+            $table->string('Region');
+            $table->unsignedBigInteger('vendeur_id')->nullable();
             $table->string('email')->nullable();
-            $table->foreign('email')->references('email')->on('users')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
          });
     }
@@ -30,10 +36,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('clients', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropForeign(['email']);
-        });
         Schema::dropIfExists('clients');
     }
+
 };
+

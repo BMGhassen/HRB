@@ -19,8 +19,11 @@ return new class extends Migration
             $table->enum('state',['Actif', 'NonActif'])->default('NonActif');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->unsignedBigInteger('code_client')->nullable();
+            $table->unsignedBigInteger('vendeur_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            // $table->foreign('client_id')->references('code')->on('clients')->onDelete('set null');
         });
     }
 

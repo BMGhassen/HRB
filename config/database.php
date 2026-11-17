@@ -93,6 +93,18 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'idempiere' => [
+        'driver' => 'pgsql',
+        'host' => env('IDEMPIERE_DB_HOST', '127.0.0.1'),
+        'port' => env('IDEMPIERE_DB_PORT', '5432'),
+        'database' => env('IDEMPIERE_DB_DATABASE', 'idempiere'),
+        'username' => env('IDEMPIERE_DB_USERNAME', 'adempiere'),
+        'password' => env('IDEMPIERE_DB_PASSWORD', 'adempiere'),
+        'charset' => 'utf8',
+        'prefix' => '',
+        'search_path' => 'adempiere,public', // iDempiere tables live in the 'adempiere' schema
+        'sslmode' => 'prefer',
+],
     ],
 
     /*

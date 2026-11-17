@@ -17,3 +17,10 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# Build archive (hundreds of MB, rebuilt by 
+pm run build)
+/public/build.zip
+
+# Import files: may contain client data, never commit them
+/storage/csvFiles/

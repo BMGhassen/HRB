@@ -1,273 +1,295 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Etablissement Rekik</title>
-        <meta
-          content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-          name="viewport"
-        />
-        <link
-          rel="icon"
-          href="{{asset('build/assets/img/007.ico')}}"
-          type="image/x-icon"
-        />
+@extends('layouts.admin')
 
-        <!-- Fonts and icons -->
-        <script src="{{asset('build/dashassets/js/plugin/webfont/webfont.min.js')}}"></script>
-        <script>
-          WebFont.load({
-            google: { families: ["Public Sans:300,400,500,600,700"] },
-            custom: {
-              families: [
-                "Font Awesome 5 Solid",
-                "Font Awesome 5 Regular",
-                "Font Awesome 5 Brands",
-                "simple-line-icons",
-              ],
-              urls: ["{{asset('build/dashassets/css/fonts.min.css')}}"],
-            },
-            active: function () {
-              sessionStorage.fonts = true;
-            },
-          });
-        </script>
+@section('title', 'Utilisateurs')
 
-        <!-- CSS Files -->
-        <link rel="stylesheet" href="{{asset('build/dashassets/css/bootstrap.min.css')}}" />
-        <link rel="stylesheet" href="{{asset('build/dashassets/css/plugins.min.css')}}" />
-        <link rel="stylesheet" href="{{asset('build/dashassets/css/kaiadmin.min.css')}}" />
+@section('content')
 
-        <!-- CSS Just for demo purpose, don't include it in your project -->
-        <link rel="stylesheet" href="{{asset('build/dashassets/css/demo.css')}}" />
-      </head>
-      <body>
-        <div class="wrapper">
-          <!-- Sidebar -->
-            @include('inc.admin.sidebar')
-          <!-- End Sidebar -->
+<div class="mb-6 flex justify-between items-center">
+    <div>
+        <h1 class="text-2xl font-black text-white">
+            <span class="text-[#FFC107]"><i class="fa-solid fa-users mr-2"></i></span>Utilisateurs
+        </h1>
+        <p class="text-zinc-500 text-sm mt-1">Gestion des utilisateurs</p>
+    </div>
+</div>
 
-          <div class="main-panel">
-            <div class="main-header">
-              <div class="main-header-logo">
-                <!-- Logo Header -->
-                <div class="logo-header" data-background-color="dark">
-                  <a href="index.html" class="logo">
-                    <img
-                      src="{{asset('build/dashassets/img/kaiadmin/logo_light.svg')}}"
-                      alt="navbar brand"
-                      class="navbar-brand"
-                      height="20"
-                    />
-                  </a>
-                  <div class="nav-toggle">
-                    <button class="btn btn-toggle toggle-sidebar">
-                      <i class="gg-menu-right"></i>
-                    </button>
-                    <button class="btn btn-toggle sidenav-toggler">
-                      <i class="gg-menu-left"></i>
-                    </button>
-                  </div>
-                  <button class="topbar-toggler more">
-                    <i class="gg-more-vertical-alt"></i>
-                  </button>
-                </div>
-                <!-- End Logo Header -->
-              </div>
-              @include('inc.admin.navbar')
-              <!-- Navbar Header -->
+<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-6 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-zinc-300">
+            <thead class="bg-zinc-800 text-[#FFC107] uppercase text-xs">
+                <tr>
+                    <th class="px-4 py-3 text-left">#</th>
+                    <th class="px-4 py-3 text-left">Nom</th>
+                    <th class="px-4 py-3 text-left">Email</th>
+                    <th class="px-4 py-3 text-left">Role</th>
+                    <th class="px-4 py-3 text-left">Client associé</th>
+                    <th class="px-4 py-3 text-left">Etat</th>
+                    <th class="px-4 py-3 text-left">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($users as $index => $u)
+                <tr class="border-b border-zinc-800 hover:bg-zinc-800/50 transition-colors" x-data="{ editModalOpen: false }">
+                    <td class="px-4 py-3">{{ $index+1 }}</td>
+                    <td class="px-4 py-3 font-semibold text-white">{{ $u->name }}</td>
+                    <td class="px-4 py-3">{{ $u->email }}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 bg-zinc-800 rounded-full text-xs font-bold text-zinc-300">
+                            {{ ucfirst($u->role) }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                        @if($u->code_client)
+                            <div class="flex flex-col">
+                                <span class="font-mono text-xs font-bold text-[#FFC107]">{{ $u->code_client }}</span>
+                                <span class="text-xs text-zinc-400 truncate max-w-[150px]">{{ $u->client->rs ?? '' }}</span>
+                            </div>
+                        @else
+                            <span class="text-zinc-600 text-xs italic">—</span>
+                        @endif
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold {{ $u->state == 'Actif' ? 'bg-green-900/60 text-green-300' : 'bg-red-900/60 text-red-300' }}">
+                            <span class="w-1.5 h-1.5 rounded-full {{ $u->state == 'Actif' ? 'bg-green-400' : 'bg-red-400' }}"></span>
+                            {{ $u->state }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <button @click="editModalOpen = true" class="text-blue-400 hover:text-blue-300 transition-colors">
+                            <i class="fa fa-edit"></i>
+                        </button>
 
-              <!-- End Navbar -->
-            </div>
-
-            <div class="container">
-              <div class="page-inner">
-                <h2>Liste Utilisateurs</h2>
-                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                    <table class="table table-head-bg-warning mt-4">
-                        <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Nom</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Role</th>
-                            <th scope="col">Etat</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach ($users as $index => $u)
-
-                        <tr>
-                            <td>{{ $index+1 }}</td>
-                            <td>{{ $u->name }}</td>
-                            <td>{{ $u->email }}</td>
-                            <td>{{ $u->role }}</td>
-                            <td>
-                                <span class="badge {{ $u->state == 'NonActif' ? 'badge-danger' : ($u->state == 'Actif' ? 'badge-success' : '') }} ">{{ $u->state }}</span>
-                            </td>
-
-                            <td>
-                                <div class="d-flex">
-                                <a data-bs-toggle="modal" data-bs-target="#editUser{{ $u->id }}" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task">
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                                <a onclick="return confirm('Voulez-vous vraiment supprimer le compte de cet utilisateur?')" href="{{ route('users.delete', ['id' => $u->id]) }}" class="btn btn-link btn-danger">
-                                    <i class="fa fa-times"></i>
-                                <a>
+                        <!-- Modal Edit -->
+                        <div x-show="editModalOpen" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 text-left" style="display: none;" x-transition>
+                            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-2xl overflow-hidden" @click.away="editModalOpen = false">
+                                <div class="flex justify-between items-center p-6 border-b border-zinc-800">
+                                    <h3 class="text-lg font-bold text-white">Modifier un Utilisateur</h3>
+                                    <button @click="editModalOpen = false" class="text-zinc-500 hover:text-white transition-colors">
+                                        <i class="fa-solid fa-xmark text-xl"></i>
+                                    </button>
                                 </div>
-                            </td>
-                        </tr>
+                                
+                                <form action="{{ route('users.update') }}" method="POST">
+                                    @csrf
+                                    <div class="p-6 space-y-4">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-zinc-400 mb-1">Nom:</label>
+                                                <input type="text" name="name" value="{{ $u->name }}" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white placeholder-zinc-500 w-full focus:ring-2 focus:ring-[#FFC107] focus:outline-none">
+                                                @error('name')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-zinc-400 mb-1">Email:</label>
+                                                <input type="email" name="email" value="{{ $u->email }}" class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white placeholder-zinc-500 w-full focus:ring-2 focus:ring-[#FFC107] focus:outline-none">
+                                                @error('email')<p class="text-red-500 text-sm mt-1">{{ $message }}</p>@enderror
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-2 gap-4 mt-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-zinc-400 mb-2">Role:</label>
+                                                <div class="space-y-2">
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="role" value="client" {{ $u->role == 'client' ? 'checked' : '' }} class="text-[#FFC107] focus:ring-[#FFC107]"> Client
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="role" value="vendeur" {{ $u->role == 'vendeur' ? 'checked' : '' }} class="text-[#FFC107] focus:ring-[#FFC107]"> Vendeur
+                                                    </label>
+                                                    <label class="flex items-center gap-2">
+                                                        <input type="radio" name="role" value="admin" {{ $u->role == 'admin' ? 'checked' : '' }} class="text-[#FFC107] focus:ring-[#FFC107]"> Admin
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-zinc-400 mb-2">Etat & Code Client:</label>
+                                                
+                                                <div class="mb-4">
+                                                    <label class="flex items-center gap-2 cursor-pointer">
+                                                        <input type="checkbox" name="state" value="Actif" {{ $u->state == 'Actif' ? 'checked' : '' }} class="rounded text-[#FFC107] focus:ring-[#FFC107]"> Actif
+                                                    </label>
+                                                </div>
+                                                
+                                                <div>
+                                                    <label class="block text-sm font-medium text-zinc-400 mb-1">Code Client</label>
+                                                    <div class="flex gap-2">
+                                                        <input type="text" id="codeInput{{ $u->id }}" name="code" value="{{ $u->code_client }}" class="code-client-input bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white w-full focus:ring-2 focus:ring-[#FFC107] focus:outline-none">
+                                                        <button type="button" @click.prevent="$dispatch('open-search-modal', { targetInputId: 'codeInput{{ $u->id }}' })" class="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-2 rounded-xl transition-all" title="Chercher un client">
+                                                            <i class="fa-solid fa-search"></i>
+                                                        </button>
+                                                    </div>
+                                                    <p class="text-red-500 text-sm mt-1 code-error"></p>
+                                                    <p class="text-green-500 text-sm mt-1 rs-value">{{ $u->client ? $u->client->rs : '' }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" value="{{ $u->id }}" name="id_user">
+                                    
+                                    <div class="p-6 border-t border-zinc-800 flex justify-end gap-3">
+                                        <button type="button" @click="editModalOpen = false" class="bg-zinc-700 hover:bg-zinc-600 text-white font-bold px-4 py-2 rounded-xl transition-all">Annuler</button>
+                                        <button type="submit" class="bg-[#FFC107] hover:bg-[#E5A100] text-black font-bold px-4 py-2 rounded-xl transition-all">Modifier</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
 
-                        @endforeach
-                        </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
+<!-- Global Client Search Modal -->
+<div x-data="clientSearch()" @open-search-modal.window="openSearch($event.detail.targetInputId)" x-show="isOpen" class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4" style="display: none;" x-transition>
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]" @click.away="closeSearch()">
+        <div class="flex justify-between items-center p-6 border-b border-zinc-800 shrink-0">
+            <h3 class="text-lg font-bold text-white">Rechercher & Associer un Client</h3>
+            <button @click="closeSearch()" class="text-zinc-500 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
         </div>
-
-
-          <!-- Modal Modifier -->
-          @foreach($users as $index=>$u)
-        <div class="modal fade" id="editUser{{ $u->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Modifier l'utilisateur <span class="text-primary">{{$u->name}}</span></h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <form  action="{{ route('users.update') }}" method="POST" enctype="multipart/form-data">
-                  @csrf
-                  <div class="modal-body">
-                      <div class="row">
-                          <div class="col form-group">
-                              <label for="name">Nom:</label>
-                              <input type="text" class="form-control input-full" id="name" name="name"  value="{{ $u->name }}">
-                              @error('name')
-                              <p class="text-danger">
-                                  {{ $message }}
-                              </p>
-                              @enderror
-                          </div>
-                          <div class="col form-group">
-                              <label for="email">email</label>
-                              <input type="email" class="form-control input-full" id="email" name="email" placeholder="Enter Input" value="{{ $u->email }}">
-                              @error('email')
-                              <p class="text-danger">
-                                  {{ $message }}
-                              </p>
-                              @enderror
-                          </div>
-                      </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="role" id="role1" {{ $u->role == 'client' ? 'checked' : '' }} value="client">
-                                <label class="form-check-label" for="role1">
-                                Client
-                                </label>
+        
+        <div class="p-6 shrink-0 border-b border-zinc-800 bg-zinc-800/20">
+            <div class="relative">
+                <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+                <input type="text" x-model="searchQuery" @input.debounce.300ms="performSearch()" class="bg-zinc-800 border border-zinc-700 rounded-xl pl-12 pr-4 py-3 text-white placeholder-zinc-500 w-full focus:ring-2 focus:ring-[#FFC107] focus:outline-none" placeholder="Rechercher par Code, Nom, Raison Sociale...">
+            </div>
+        </div>
+        
+        <div class="overflow-y-auto p-0 flex-1">
+            <div x-show="isLoading" class="p-8 text-center text-zinc-500">
+                <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-[#FFC107]"></i>
+                <p>Recherche en cours...</p>
+            </div>
+            
+            <div x-show="!isLoading && results.length === 0 && searchQuery.length > 0" class="p-8 text-center text-zinc-500">
+                <i class="fa-solid fa-folder-open text-3xl mb-3 opacity-50"></i>
+                <p>Aucun client trouvé pour "<span x-text="searchQuery"></span>"</p>
+            </div>
+            
+            <div x-show="!isLoading && results.length > 0" class="divide-y divide-zinc-800">
+                <template x-for="client in results" :key="client.code">
+                    <div class="p-4 hover:bg-zinc-800/50 flex items-center justify-between transition-colors">
+                        <div>
+                            <div class="font-bold text-white flex items-center gap-2">
+                                <span class="bg-zinc-800 text-[#FFC107] font-mono text-xs px-2 py-0.5 rounded" x-text="client.code"></span>
+                                <span x-text="client.rs"></span>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="role" id="role2" {{ $u->role == 'vendeur' ? 'checked' : '' }} value="vendeur">
-                                <label class="form-check-label" for="role2">
-                                Vendeur
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="role" id="role3" {{ $u->role == 'admin' ? 'checked' : '' }} value="admin">
-                                <label class="form-check-label" for="role3">
-                                Admin
-                                </label>
+                            <div class="text-sm text-zinc-500 mt-1 flex items-center gap-4">
+                                <template x-if="client.email"><span><i class="fa-solid fa-envelope mr-1"></i> <span x-text="client.email"></span></span></template>
+                                <template x-if="client.tel"><span><i class="fa-solid fa-phone mr-1"></i> <span x-text="client.tel"></span></span></template>
                             </div>
                         </div>
-                        <div class="col">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="state" name="state" value="{{$u->state}}" {{ $u->state == 'Actif' ? 'checked' : '' }}>
-                                <label class="form-check-label" for="state">{{ $u->state }}</label>
-                            </div>
-                        </div>
+                        <button type="button" @click="selectClient(client)" class="bg-zinc-800 hover:bg-[#FFC107] text-zinc-300 hover:text-black font-bold px-3 py-1.5 rounded-lg transition-all text-sm flex items-center gap-2 border border-zinc-700 hover:border-[#FFC107]">
+                            <i class="fa-solid fa-link"></i> Associer
+                        </button>
                     </div>
-                    <input type="hidden" value="{{ $u->id }}" name="id_user">
-
-                  </div>
-                  <div class="modal-footer">
-                      <button type="button" class="btn btn-danger btn-border" data-bs-dismiss="modal">Annuler</button>
-                      <button type="submit" class="btn btn-primary">Modifier</button>
-                  </div>
-              </form>
+                </template>
             </div>
-          </div>
         </div>
+    </div>
+</div>
 
+@endsection
 
+@section('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript">
+    // Alpine.js component for Client Search Modal
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('clientSearch', () => ({
+            isOpen: false,
+            searchQuery: '',
+            results: [],
+            isLoading: false,
+            targetInputId: null,
 
-        @endforeach
-        <!--   Core JS Files   -->
-        <script src="{{asset('build/dashassets/js/core/jquery-3.7.1.min.js')}}"></script>
-        <script src="{{asset('build/dashassets/js/core/popper.min.js')}}"></script>
-        <script src="{{asset('build/dashassets/js/core/bootstrap.min.js')}}"></script>
+            openSearch(targetId) {
+                this.targetInputId = targetId;
+                this.isOpen = true;
+                this.searchQuery = '';
+                this.results = [];
+                // Focus input after transition
+                setTimeout(() => {
+                    const input = this.$el.querySelector('input[type="text"]');
+                    if (input) input.focus();
+                }, 100);
+            },
 
-        <!-- jQuery Scrollbar -->
-        <script src="{{asset('build/dashassets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js')}}"></script>
+            closeSearch() {
+                this.isOpen = false;
+            },
 
-        <!-- Chart JS -->
-        <script src="{{asset('build/dashassets/js/plugin/chart.js/chart.min.js')}}"></script>
+            async performSearch() {
+                if (this.searchQuery.length < 2) {
+                    this.results = [];
+                    return;
+                }
+                
+                this.isLoading = true;
+                try {
+                    const response = await fetch(`{{ route('clients.search.ajax') }}?query=${encodeURIComponent(this.searchQuery)}`);
+                    this.results = await response.json();
+                } catch (error) {
+                    console.error('Search error:', error);
+                    this.results = [];
+                } finally {
+                    this.isLoading = false;
+                }
+            },
 
-        <!-- jQuery Sparkline -->
-        <script src="{{asset('build/dashassets/js/plugin/jquery.sparkline/jquery.sparkline.min.js')}}"></script>
+            selectClient(client) {
+                if (this.targetInputId) {
+                    const targetInput = document.getElementById(this.targetInputId);
+                    if (targetInput) {
+                        targetInput.value = client.code;
+                        const outer = targetInput.closest('div').parentElement;
+                        if (outer) {
+                            const rsEl = outer.querySelector('.rs-value');
+                            const errEl = outer.querySelector('.code-error');
+                            if (rsEl) rsEl.textContent = client.rs || '';
+                            if (errEl) errEl.textContent = '';
+                        }
+                        // Trigger input event for the jQuery listener below
+                        targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                }
+                this.closeSearch();
+            }
+        }));
+    });
 
-        <!-- Chart Circle -->
-        <script src="{{asset('build/dashassets/js/plugin/chart-circle/circles.min.js')}}"></script>
+    $(document).ready(function() {
+        $(document).on('input', '.code-client-input', function() {
+            var code = $(this).val();
+            var $wrapper = $(this).closest('div').parent(); // go up to the outer div
+            var $error = $wrapper.find('.code-error');
+            var $rs = $wrapper.find('.rs-value');
 
-        <!-- Datatables -->
-        <script src="{{asset('build/dashassets/js/plugin/datatables/datatables.min.js')}}"></script>
-
-        <!-- Bootstrap Notify -->
-        <script src="{{asset('build/dashassets/js/plugin/bootstrap-notify/bootstrap-notify.min.js')}}"></script>
-
-        <!-- jQuery Vector Maps -->
-        <script src="{{asset('build/dashassets/js/plugin/jsvectormap/jsvectormap.min.js')}}"></script>
-        <script src="{{asset('build/dashassets/js/plugin/jsvectormap/world.js')}}"></script>
-
-        <!-- Sweet Alert -->
-        <script src="{{asset('build/dashassets/js/plugin/sweetalert/sweetalert.min.js')}}"></script>
-
-        <!-- Kaiadmin JS -->
-        <script src="{{asset('build/dashassets/js/kaiadmin.min.js')}}"></script>
-
-        <!-- Kaiadmin DEMO methods, don't include it in your project! -->
-        <script>
-          $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#177dff",
-            fillColor: "rgba(23, 125, 255, 0.14)",
-          });
-
-          $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#f3545d",
-            fillColor: "rgba(243, 84, 93, .14)",
-          });
-
-          $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#ffa534",
-            fillColor: "rgba(255, 165, 52, .14)",
-          });
-        </script>
-      </body>
-    </html>
-
+            if (code) {
+                $.ajax({
+                    url: '{{ route('clients.check') }}',
+                    type: 'GET',
+                    data: { code_client: code },
+                    success: function(response) {
+                        if (response.exists) {
+                            $rs.text(response.rs);
+                            $error.text('');
+                        } else {
+                            $error.text('Il n\'existe pas un client avec ce code.');
+                            $rs.text('');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            } else {
+                $error.text('');
+                $rs.text('');
+            }
+        });
+    });
+</script>
+@endsection

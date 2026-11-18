@@ -25,7 +25,7 @@
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach ($products as $p)
-            <div class="bg-lion-card border border-zinc-800 hover:border-[#FFC107]/60 rounded-2xl p-5 transition-all shadow-xl hover:shadow-[0_0_25px_rgba(255,193,7,0.15)] group flex flex-col justify-between">
+            <div class="relative cursor-pointer bg-lion-card border border-zinc-800 hover:border-[#FFC107]/60 rounded-2xl p-5 transition-all shadow-xl hover:shadow-[0_0_25px_rgba(255,193,7,0.15)] group flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-start mb-3">
                         <span class="bg-black text-[#FFC107] font-mono font-bold text-xs px-2.5 py-1 rounded-lg border border-[#FFC107]/40">
@@ -50,20 +50,33 @@
                         <img class="max-h-full object-contain mix-blend-multiply" src="{{ asset('build/assets/img/' . $p->ref . '.jpg') }}" onerror="this.src='{{ asset('build/shopassets/img/logo_Header.png') }}'" alt="{{ $p->ref }}">
                     </a>
 
-                    <a href="{{ route('guest.details', ['id' => $p->id]) }}" class="block font-bold text-white group-hover:text-lion-accent transition-colors mb-2 text-sm line-clamp-2">
+                    <a href="{{ route('guest.details', ['id' => $p->id]) }}" class="block font-bold text-white group-hover:text-lion-accent transition-colors mb-2 text-sm line-clamp-2 after:absolute after:inset-0 after:rounded-2xl">
                         {{ $p->designation }}
                     </a>
                 </div>
                 
                 <div class="mt-4">
-                    <div class="flex items-baseline justify-between pt-3 border-t border-zinc-800 mb-4">
-                        <span class="text-xs text-zinc-400">Prix Pro</span>
-                        <a href="{{ route('login') }}" class="text-xs text-lion-accent font-bold underline hover:text-lion-accent-light">Connectez-vous</a>
-                    </div>
+                    @auth
+                        {{-- Logged in: /login would just bounce back here, so show the price and open the product --}}
+                        <div class="flex items-baseline justify-between pt-3 border-t border-zinc-800 mb-4">
+                            <span class="text-xs text-zinc-400">Prix</span>
+                            <span class="text-sm font-black text-[#FFC107]">{{ number_format((float) $p->prix, 3, ',', ' ') }} <span class="text-[10px] text-zinc-400">DT HT</span></span>
+                        </div>
 
-                    <a href="{{ route('login') }}" class="block w-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-sm text-center transition-colors">
-                        <i class="fa-solid fa-lock mr-1"></i> Connexion requise
-                    </a>
+                        <span class="block w-full bg-[#FFC107] group-hover:bg-[#FFD54F] text-black font-bold py-2 rounded-lg text-sm text-center transition-colors">
+                            <i class="fa-solid fa-eye mr-1"></i> Voir le produit
+                        </span>
+                    @else
+                        {{-- relative z-10: stay clickable above the card-wide product link --}}
+                        <div class="flex items-baseline justify-between pt-3 border-t border-zinc-800 mb-4">
+                            <span class="text-xs text-zinc-400">Prix</span>
+                            <a href="{{ route('login') }}" class="relative z-10 text-xs text-lion-accent font-bold underline hover:text-lion-accent-light">Connectez-vous</a>
+                        </div>
+
+                        <a href="{{ route('login') }}" class="relative z-10 block w-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-2 rounded-lg text-sm text-center transition-colors">
+                            <i class="fa-solid fa-lock mr-1"></i> Connexion requise
+                        </a>
+                    @endauth
                 </div>
             </div>
             @endforeach

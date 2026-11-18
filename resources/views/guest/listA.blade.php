@@ -8,7 +8,7 @@
             <span class="text-zinc-500 text-sm font-bold">{{ $results->total() }} résultats</span>
             @guest
             <a href="{{ route('login') }}" class="bg-[#FFC107] hover:bg-[#FFD54F] text-black font-black px-4 py-2 rounded-xl text-sm transition-all flex items-center gap-2">
-                <i class="fa-solid fa-right-to-bracket"></i> Connexion Pro
+                <i class="fa-solid fa-right-to-bracket"></i> Connexion
             </a>
             @endguest
         </div>

@@ -40,7 +40,7 @@
             <h2 class="text-xl sm:text-2xl font-black text-white mb-4">Votre compte est en cours de validation</h2>
             
             <p class="text-zinc-400 text-sm leading-relaxed mb-8">
-                Merci de votre inscription. Votre compte a bien été créé, mais il nécessite l'approbation d'un administrateur avant de pouvoir accéder au catalogue pro et aux tarifs. 
+                Merci de votre inscription. Votre compte a bien été créé, mais il nécessite l'approbation d'un administrateur avant de pouvoir accéder au catalogue et aux tarifs. 
                 <br><br>
                 Nous vous contacterons très prochainement.
             </p>

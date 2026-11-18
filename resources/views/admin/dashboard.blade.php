@@ -51,14 +51,6 @@
                     <span>Sync Clients</span>
                 </button>
             </form>
-
-            {{-- Link to full ERP status page --}}
-            <a href="{{ route('erp.status') }}"
-               class="text-zinc-400 hover:text-[#FFC107] text-sm font-medium px-3 py-2.5 rounded-xl border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-800/40 flex items-center gap-1.5 transition-colors"
-               title="Voir la page détaillée ERP">
-                <i class="fa-solid fa-chart-line text-xs"></i>
-                <span>Statut ERP</span>
-            </a>
         </div>
     </div>
 
@@ -104,33 +96,6 @@
         <div class="w-full bg-zinc-800 rounded-full h-3 overflow-hidden">
             <div id="syncProgressBar" class="bg-gradient-to-r from-[#FFC107] to-amber-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
         </div>
-    </div>
-</div>
-
-{{-- Row 1: CSV + Articles + Clients --}}
-<div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-6">
-    <h2 class="text-sm font-bold text-zinc-400 uppercase tracking-widest mb-4">Importations CSV</h2>
-    <div class="flex flex-wrap gap-3">
-
-        {{-- Charger CSV --}}
-        <button type="button"
-                onclick="document.getElementById('modal-importE').classList.remove('hidden')"
-                class="bg-[#FFC107] hover:bg-[#E5A100] text-black font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2">
-            <i class="fa fa-file-import"></i> Charger CSV
-        </button>
-
-        {{-- MAJ Articles --}}
-        <a href="{{ route('imparti') }}"
-           class="bg-[#FFC107] hover:bg-[#E5A100] text-black font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2">
-            <i class="fa fa-file-import"></i> MAJ Articles
-        </a>
-
-        {{-- MAJ Clients --}}
-        <a href="{{ route('impcli') }}"
-           class="bg-[#FFC107] hover:bg-[#E5A100] text-black font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2">
-            <i class="fa fa-file-import"></i> MAJ Clients
-        </a>
-
     </div>
 </div>
 
@@ -186,38 +151,6 @@
             <div class="flex justify-end gap-3 mt-4">
                 <button type="button"
                         onclick="document.getElementById('modal-importI').classList.add('hidden')"
-                        class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl">
-                    Annuler
-                </button>
-                <button type="submit"
-                        class="bg-[#FFC107] hover:bg-[#E5A100] text-black font-bold px-4 py-2 rounded-xl transition-all">
-                    Importer
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-{{-- ── Modal: Charger CSV ───────────────────────────────────────────────── --}}
-<div id="modal-importE"
-     class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center">
-    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md p-6 shadow-2xl">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-bold text-white">Importer un fichier CSV</h3>
-            <button onclick="document.getElementById('modal-importE').classList.add('hidden')"
-                    class="text-zinc-400 hover:text-white text-xl leading-none">&times;</button>
-        </div>
-        <form action="{{ route('articles.import') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="mb-4">
-                <label class="block text-sm text-zinc-400 mb-1">Importer un fichier</label>
-                <input type="file" id="import_csv" name="import_csv" accept=".csv"
-                       class="bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white w-full
-                              focus:ring-2 focus:ring-[#FFC107] focus:outline-none">
-            </div>
-            <div class="flex justify-end gap-3 mt-4">
-                <button type="button"
-                        onclick="document.getElementById('modal-importE').classList.add('hidden')"
                         class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-xl">
                     Annuler
                 </button>
@@ -287,8 +220,10 @@
         text.textContent = 'Mise à jour...';
 
         try {
-            const res = await fetch("{{ url('/admin/erp/sync-stock-now') }}");
-            const data = await res.json();
+            const res = await fetch("{{ url('/admin/erp/sync-stock-now') }}", { headers: { 'Accept': 'application/json' } });
+            const data = (res.headers.get('content-type') || '').includes('application/json')
+                ? await res.json()
+                : { success: false, error: `Erreur serveur (${res.status}). Voir storage/logs/laravel.log.` };
 
             if (data.success) {
                 Swal.fire({

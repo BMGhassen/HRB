@@ -32,6 +32,23 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Check VM secrets
+        env:
+          H: ${{ secrets.VM_HOST }}
+          U: ${{ secrets.VM_USER }}
+          K: ${{ secrets.VM_SSH_KEY }}
+          KH: ${{ secrets.VM_KNOWN_HOSTS }}
+        run: |
+          missing=""
+          [ -n "$H" ]  || missing="$missing VM_HOST"
+          [ -n "$U" ]  || missing="$missing VM_USER"
+          [ -n "$K" ]  || missing="$missing VM_SSH_KEY"
+          [ -n "$KH" ] || missing="$missing VM_KNOWN_HOSTS"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing. See PIPELINE.md, GitHub setup."
+            exit 1
+          fi
+
       - name: Set up SSH to the VM
         run: |
           install -m 700 -d ~/.ssh
@@ -78,6 +95,23 @@ jobs:
         with:
           name: erp-plugins
           path: dist
+
+      - name: Check VM secrets
+        env:
+          H: ${{ secrets.VM_HOST }}
+          U: ${{ secrets.VM_USER }}
+          K: ${{ secrets.VM_SSH_KEY }}
+          KH: ${{ secrets.VM_KNOWN_HOSTS }}
+        run: |
+          missing=""
+          [ -n "$H" ]  || missing="$missing VM_HOST"
+          [ -n "$U" ]  || missing="$missing VM_USER"
+          [ -n "$K" ]  || missing="$missing VM_SSH_KEY"
+          [ -n "$KH" ] || missing="$missing VM_KNOWN_HOSTS"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing. See PIPELINE.md, GitHub setup."
+            exit 1
+          fi
 
       - name: Set up SSH to the VM
         run: |

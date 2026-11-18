@@ -24,10 +24,6 @@
            class="bg-[#FFC107] hover:bg-[#E5A100] text-black font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-2">
             <i class="fa fa-sync-alt"></i> Synchronisation ERP
         </a>
-        <button onclick="document.getElementById('modal-addArticle').classList.remove('hidden')"
-                class="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-xl flex items-center gap-2">
-            <i class="fa fa-plus text-[#FFC107]"></i> Nouvel Article
-        </button>
     </div>
 </div>
 
@@ -321,8 +317,10 @@
         text.textContent = 'Synchronisation...';
 
         try {
-            const res = await fetch("{{ url('/admin/erp/sync-stock-now') }}");
-            const data = await res.json();
+            const res = await fetch("{{ url('/admin/erp/sync-stock-now') }}", { headers: { 'Accept': 'application/json' } });
+            const data = (res.headers.get('content-type') || '').includes('application/json')
+                ? await res.json()
+                : { success: false, error: `Erreur serveur (${res.status}). Voir storage/logs/laravel.log.` };
             if (data.success) {
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({

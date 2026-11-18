@@ -58,11 +58,6 @@
                                     title="Modifier">
                                 <i class="fa fa-edit text-xs"></i>
                             </button>
-                            <a href="#" onclick="return confirm('Voulez-vous vraiment supprimer ce client?')"
-                               class="bg-zinc-800 hover:bg-red-900/60 text-red-400 p-1.5 rounded-lg transition-all"
-                               title="Supprimer">
-                                <i class="fa fa-times text-xs"></i>
-                            </a>
                         </div>
                     </td>
                 </tr>

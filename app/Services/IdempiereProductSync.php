@@ -37,7 +37,6 @@ class IdempiereProductSync
             $batchSize = 100;
             $page = 1;
             $now = now()->toDateTimeString();
-            $token = $this->erp->getToken();
             $baseUrl = rtrim((string) config('idempiere.base_url'), '/');
             $priceVersion = config('idempiere.price_list_version_id', 1000000);
 
@@ -71,7 +70,8 @@ class IdempiereProductSync
                 $idList = implode(',', $productIds);
 
                 // 2. PARALLEL HTTP POOL (Fetches Prices & Stock simultaneously!)
-                $poolResponses = Http::pool(function (Pool $pool) use ($baseUrl, $token, $idList, $priceVersion, $productIds) {
+                // withTokenRetry: always the current JWT, renewed once on 401 (it can expire mid-sync)
+                $poolResponses = $this->withTokenRetry(fn (string $token) => Http::pool(function (Pool $pool) use ($baseUrl, $token, $idList, $priceVersion, $productIds) {
                     return [
                         $pool->as('prices')->withToken($token)->get("{$baseUrl}/models/m_productprice", [
                             '$filter' => "M_Product_ID in ({$idList}) and M_PriceList_Version_ID eq {$priceVersion}",
@@ -84,7 +84,7 @@ class IdempiereProductSync
                             '$top'    => count($productIds) * 5,
                         ])
                     ];
-                });
+                }));
 
                 // A failed price/stock call must stop the sync: otherwise every product in
                 // this batch would be saved with price 0 and stock 0.
@@ -103,7 +103,7 @@ class IdempiereProductSync
                 $priceRecords = $poolResponses['prices']->json('records') ?? [];
                 foreach ($priceRecords as $pRow) {
                     $pid = $pRow['M_Product_ID']['id'] ?? null;
-                    if ($pid) $prices[(int)$pid] = (float) ($pRow['PriceStd'] ?? $pRow['PriceList'] ?? 0);
+                    if ($pid) $prices[(int)$pid] = IdempiereService::effectivePrice($pRow);
                 }
 
                 // Parse Parallel Stocks
@@ -193,101 +193,162 @@ class IdempiereProductSync
         return $report;
     }
     /**
-     * Ultra-fast Stock-Only Sync (Runs in ~500ms!)
+     * Stock-only sync (every 10 minutes and the "Actualiser Stock" button).
+     *
+     * Reads every m_storageonhand page (8 in parallel), then applies all quantities in a
+     * few batched UPDATEs inside one transaction. ~12k storage rows: seconds, not minutes.
      */
- public function syncStockOnly(): array
+    public function syncStockOnly(): array
     {
+        set_time_limit(0);
         $startTime = microtime(true);
-        $updatedCount = 0;
-        $baseUrl = rtrim((string) config('idempiere.base_url'), '/');
-        $token = $this->erp->getToken();
 
         try {
-            $page = 1;
-            $stockMapById = [];
-            $stockMapBySku = [];
+            [$stockMapById, $stockMapBySku] = $this->fetchStorage();
 
-            do {
-                // Fetch storage records page by page
-                $response = Http::withToken($token)
-                    ->timeout(15)
-                    ->get("{$baseUrl}/models/m_storageonhand", [
-                        '$select' => 'M_Product_ID,QtyOnHand',
-                        '$top'    => 100,
-                        '$skip'   => ($page - 1) * 100
-                    ]);
+            $now = now()->toDateTimeString();
+            $updatedCount = 0;
 
-                // A failed page must abort: with a partial map, the "zero out" step below
-                // would set stock to 0 for every article on the pages we never read.
-                if (!$response->successful()) {
-                    throw new Exception("m_storageonhand page {$page} failed ({$response->status()})");
+            DB::transaction(function () use ($stockMapById, $stockMapBySku, $now, &$updatedCount) {
+                // 1. Match by iDempiere product ID
+                $updatedCount += $this->batchUpdateStock('erp_product_id', $stockMapById, $now);
+
+                // 2. Fallback by SKU, only for articles that have no ERP product ID
+                $refsWithoutId = Article::whereNull('erp_product_id')
+                    ->whereIn('ref', array_keys($stockMapBySku))
+                    ->pluck('ref')->all();
+                $updatedCount += $this->batchUpdateStock(
+                    'ref', array_intersect_key($stockMapBySku, array_flip($refsWithoutId)), $now
+                );
+
+                // 3. Articles with stock locally but no longer in iDempiere storage -> 0.
+                //    Everything matched above was stamped with $now, so "not stamped" = gone.
+                if (!empty($stockMapById)) {
+                    Article::where('qte_stock', '>', 0)
+                        ->where(fn ($q) => $q->whereNull('erp_synced_at')->orWhere('erp_synced_at', '<', $now))
+                        ->update(['qte_stock' => 0, 'erp_synced_at' => $now]);
                 }
-
-                $records = $response->json('records') ?? [];
-
-                if (empty($records)) {
-                    break;
-                }
-
-                foreach ($records as $row) {
-                    $pid        = $row['M_Product_ID']['id'] ?? null;
-                    $identifier = $row['M_Product_ID']['identifier'] ?? '';
-                    $qty        = (float) ($row['QtyOnHand'] ?? 0);
-
-                    // 1. Map by Product ID
-                    if ($pid) {
-                        $stockMapById[(int)$pid] = ($stockMapById[(int)$pid] ?? 0) + $qty;
-                    }
-
-                    // 2. Map by SKU (Extract SKU from identifier e.g. "001 AZ2018_REGULATEUR...")
-                    if (!empty($identifier)) {
-                        $sku = trim(explode('_', $identifier)[0]);
-                        $stockMapBySku[$sku] = ($stockMapBySku[$sku] ?? 0) + $qty;
-                    }
-                }
-
-                if (count($records) < 100) {
-                    break;
-                }
-
-                $page++;
-            } while (true);
-
-            // Update MySQL articles table using Product ID FIRST, then fallback to SKU!
-            foreach ($stockMapById as $erpId => $qty) {
-                $affected = Article::where('erp_product_id', $erpId)
-                    ->update(['qte_stock' => $qty, 'erp_synced_at' => now()]);
-
-                if ($affected) {
-                    $updatedCount += $affected;
-                }
-            }
-
-            // Fallback update for any items matched by SKU
-            foreach ($stockMapBySku as $sku => $qty) {
-                Article::where('ref', $sku)
-                    ->where('qte_stock', '!=', $qty)
-                    ->update(['qte_stock' => $qty, 'erp_synced_at' => now()]);
-            }
-
-            // Zero out any articles with positive stock locally that no longer exist in ERP storage
-            if (!empty($stockMapById)) {
-                Article::where('qte_stock', '>', 0)
-                    ->whereNotIn('erp_product_id', array_keys($stockMapById))
-                    ->whereNotIn('ref', array_keys($stockMapBySku))
-                    ->update(['qte_stock' => 0, 'erp_synced_at' => now()]);
-            }
+            });
 
             return [
-                'success'           => true,
+                'success'             => true,
                 'storage_items_found' => count($stockMapById),
-                'articles_updated'  => $updatedCount,
-                'duration_ms'       => round((microtime(true) - $startTime) * 1000)
+                'articles_updated'    => $updatedCount,
+                'duration_ms'         => round((microtime(true) - $startTime) * 1000),
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('[Stock Sync Error] ' . $e->getMessage());
             return ['success' => false, 'error' => $e->getMessage()];
         }
+    }
+
+    /**
+     * Read all of m_storageonhand. Pages are fetched 8 at a time; a 401 renews the
+     * iDempiere login once. Any other failed page aborts the whole sync, because a
+     * partial map would zero the stock of every article on the pages we never read.
+     *
+     * @return array{0: array<int,float>, 1: array<string,float>} [qty by product ID, qty by SKU]
+     */
+    protected function fetchStorage(): array
+    {
+        $baseUrl  = rtrim((string) config('idempiere.base_url'), '/');
+        $pageSize = 100;
+        $parallel = 8;
+        $byId = [];
+        $bySku = [];
+        $page = 0;
+
+        while (true) {
+            $pages = range($page, $page + $parallel - 1);
+            $responses = $this->withTokenRetry(fn (string $token) => Http::pool(fn (Pool $pool) => array_map(
+                fn ($p) => $pool->as("p{$p}")->withToken($token)->timeout(30)->get("{$baseUrl}/models/m_storageonhand", [
+                    '$select'  => 'M_Product_ID,QtyOnHand',
+                    '$orderby' => 'M_StorageOnHand_UU',
+                    '$top'     => $pageSize,
+                    '$skip'    => $p * $pageSize,
+                ]),
+                $pages
+            )));
+
+            foreach ($pages as $p) {
+                $res = $responses["p{$p}"];
+                if ($res instanceof \Throwable) {
+                    throw new Exception('m_storageonhand page ' . ($p + 1) . ' failed: ' . $res->getMessage());
+                }
+                if (!$res->successful()) {
+                    throw new Exception('m_storageonhand page ' . ($p + 1) . " failed ({$res->status()})");
+                }
+
+                $records = $res->json('records') ?? [];
+                foreach ($records as $row) {
+                    $pid = $row['M_Product_ID']['id'] ?? null;
+                    $identifier = $row['M_Product_ID']['identifier'] ?? '';
+                    $qty = (float) ($row['QtyOnHand'] ?? 0);
+
+                    if ($pid) {
+                        $byId[(int) $pid] = ($byId[(int) $pid] ?? 0) + $qty;
+                    }
+                    // SKU from the identifier, e.g. "001 AZ2018_REGULATEUR..."
+                    if ($identifier !== '') {
+                        $sku = trim(explode('_', $identifier)[0]);
+                        $bySku[$sku] = ($bySku[$sku] ?? 0) + $qty;
+                    }
+                }
+
+                if (count($records) < $pageSize) {
+                    return [$byId, $bySku];   // last page reached
+                }
+            }
+
+            $page += $parallel;
+        }
+    }
+
+    /**
+     * Run a pool of requests; if any came back 401 (expired JWT), renew the token and run it once more.
+     */
+    protected function withTokenRetry(callable $send): array
+    {
+        $responses = $send($this->erp->getToken());
+
+        foreach ($responses as $res) {
+            if (!($res instanceof \Throwable) && $res->status() === 401) {
+                return $send($this->erp->refreshToken());
+            }
+        }
+
+        return $responses;
+    }
+
+    /**
+     * UPDATE articles SET qte_stock = CASE <column> WHEN ... END in chunks of 500.
+     */
+    protected function batchUpdateStock(string $column, array $quantities, string $now): int
+    {
+        if (!in_array($column, ['erp_product_id', 'ref'], true)) {
+            throw new \InvalidArgumentException("Unexpected column {$column}");
+        }
+
+        $affected = 0;
+
+        foreach (array_chunk($quantities, 500, true) as $chunk) {
+            $cases = [];
+            $bindings = [];
+            foreach ($chunk as $key => $qty) {
+                $cases[] = 'WHEN ? THEN ?';
+                array_push($bindings, $key, $qty);
+            }
+            $bindings[] = $now;
+            array_push($bindings, ...array_keys($chunk));
+            $in = implode(',', array_fill(0, count($chunk), '?'));
+
+            $affected += DB::update(
+                "UPDATE articles SET qte_stock = CASE {$column} " . implode(' ', $cases) . " END, erp_synced_at = ? WHERE {$column} IN ({$in})",
+                $bindings
+            );
+        }
+
+        return $affected;
     }
 }

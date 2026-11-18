@@ -24,7 +24,7 @@
                 <span class="hidden md:inline text-zinc-600">|</span>
                 <span class="hidden md:flex items-center gap-1.5">
                     <i class="fa-solid fa-phone text-lion-accent"></i>
-                    <span>Service Pro : <strong class="text-white">+216 71 000 000</strong></span>
+                    <span>Service client : <strong class="text-white">+216 71 000 000</strong></span>
                 </span>
             </div>
             <div class="flex items-center gap-3">
@@ -41,7 +41,7 @@
                 @endif
             @else
                 <a href="{{ url('/login') }}" class="hover:text-white transition-colors flex items-center gap-1.5 font-bold">
-                    <i class="fa-solid fa-user"></i> Espace Pro
+                    <i class="fa-solid fa-user"></i> Espace Client
                 </a>
             @endauth
             </div>
@@ -137,7 +137,11 @@
                     <a href="{{ route('guest.article.search') }}" class="text-lion-accent hover:underline flex items-center gap-1.5">
                         <i class="fa-solid fa-layer-group"></i> Tout le Catalogue
                     </a>
-                    <a href="#" class="text-amber-400 hover:text-amber-300 font-bold">Devenir Client Pro</a>
+                    @guest
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="text-amber-400 hover:text-amber-300 font-bold">Devenir client</a>
+                        @endif
+                    @endguest
                 </nav>
             </div>
         </div>

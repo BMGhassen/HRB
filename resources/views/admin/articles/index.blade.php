@@ -321,8 +321,10 @@
         text.textContent = 'Synchronisation...';
 
         try {
-            const res = await fetch("{{ url('/admin/erp/sync-stock-now') }}");
-            const data = await res.json();
+            const res = await fetch("{{ url('/admin/erp/sync-stock-now') }}", { headers: { 'Accept': 'application/json' } });
+            const data = (res.headers.get('content-type') || '').includes('application/json')
+                ? await res.json()
+                : { success: false, error: `Erreur serveur (${res.status}). Voir storage/logs/laravel.log.` };
             if (data.success) {
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({

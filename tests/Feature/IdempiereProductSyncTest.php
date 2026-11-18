@@ -206,6 +206,88 @@ class IdempiereProductSyncTest extends TestCase
         $this->assertSame(8, (int) DB::table('articles')->find($last)->qte_stock);
     }
 
+    public function test_stock_sync_reads_many_pages_in_parallel_batches(): void
+    {
+        // 25 full pages + a short last one: more than 3 parallel batches of 8
+        $pages = [];
+        foreach (range(0, 24) as $p) {
+            $pages[] = array_map(fn ($i) => $this->row(10000 + $p * 100 + $i, 1), range(0, 99));
+        }
+        $pages[] = [$this->row(2000, 8)];
+        $last = $this->article('REF-LAST', 2000, 10, 0);
+        $first = $this->article('REF-FIRST', 10000, 10, 0);
+        $this->fakeErp(storagePages: $pages);
+
+        $result = app(IdempiereProductSync::class)->syncStockOnly();
+
+        $this->assertTrue($result['success']);
+        $this->assertSame(2501, $result['storage_items_found']);
+        $this->assertSame(8, (int) DB::table('articles')->find($last)->qte_stock);
+        $this->assertSame(1, (int) DB::table('articles')->find($first)->qte_stock);
+    }
+
+    public function test_stock_sync_uses_sku_only_for_articles_without_erp_id(): void
+    {
+        $byId  = $this->article('SAME-REF', 101, 10, 0);   // matched by ID
+        $bySku = $this->article('SKU-ONLY', null, 10, 0);  // no ERP id: matched by SKU
+        $this->fakeErp(storagePages: [[$this->row(101, 3, 'SAME-REF'), $this->row(555, 7, 'SKU-ONLY')]]);
+
+        $result = app(IdempiereProductSync::class)->syncStockOnly();
+
+        $this->assertSame(2, $result['articles_updated']);
+        $this->assertSame(3, (int) DB::table('articles')->find($byId)->qte_stock);
+        $this->assertSame(7, (int) DB::table('articles')->find($bySku)->qte_stock);
+    }
+
+    public function test_stock_sync_renews_an_expired_token(): void
+    {
+        $a = $this->article('REF-A', 101, 10, 0);
+        Cache::put('idempiere_jwt_token', 'expired', 3600);
+        Http::fake(function (Request $r) {
+            if (str_contains($r->url(), '/auth/tokens')) {
+                return Http::response(['token' => 'fresh']);
+            }
+            if (!$r->hasHeader('Authorization', 'Bearer fresh')) {
+                return Http::response('Unauthorized', 401);
+            }
+            parse_str((string) parse_url($r->url(), PHP_URL_QUERY), $q);
+            return Http::response(['records' => ((int) ($q['$skip'] ?? 0)) === 0 ? [$this->row(101, 4)] : []]);
+        });
+
+        $result = app(IdempiereProductSync::class)->syncStockOnly();
+
+        $this->assertTrue($result['success'], $result['error'] ?? '');
+        $this->assertSame(4, (int) DB::table('articles')->find($a)->qte_stock);
+    }
+
+    public function test_catalog_sync_renews_a_token_that_expires_mid_sync(): void
+    {
+        $this->fakeErp(products: [$this->product(101, 'REF-A')], prices: [['M_Product_ID' => ['id' => 101], 'PriceStd' => 5]]);
+        $erp = app(\App\Services\IdempiereService::class);
+        $erp->getToken();
+        // The JWT the sync started with is no longer accepted for prices/stock
+        Http::fake(function (Request $r) {
+            $path = parse_url($r->url(), PHP_URL_PATH);
+            if (str_ends_with($path, '/auth/tokens')) {
+                return Http::response(['token' => 'fresh']);
+            }
+            if (str_ends_with($path, '/models/m_product')) {
+                return Http::response(['records' => [$this->product(101, 'REF-A')]]);
+            }
+            if (!$r->hasHeader('Authorization', 'Bearer fresh')) {
+                return Http::response('Unauthorized', 401);
+            }
+            return str_ends_with($path, '/models/m_productprice')
+                ? Http::response(['records' => [['M_Product_ID' => ['id' => 101], 'PriceStd' => 5]]])
+                : Http::response(['records' => [$this->row(101, 2)]]);
+        });
+
+        $report = $this->sync();
+
+        $this->assertSame(0, $report['errors'], implode(' | ', $report['error_log']));
+        $this->assertEqualsWithDelta(5, DB::table('articles')->where('ref', 'REF-A')->value('prix'), 0.001);
+    }
+
     public function test_stock_sync_failing_midway_changes_nothing(): void
     {
         $a = $this->article('REF-A', 101, 10, 5);   // on page 1

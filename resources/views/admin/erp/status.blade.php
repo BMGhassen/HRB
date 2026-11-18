@@ -24,11 +24,6 @@
                 🔄 Sync Catalog
             </button>
 
-            {{-- Dry-run Button --}}
-            <button type="button" id="dryRunBtn" class="btn btn-outline-secondary">
-                👁 Dry Run
-            </button>
-
             {{-- Sync Clients Button --}}
             <form method="POST" action="{{ route('erp.sync.clients') }}" id="syncClientsForm">
                 @csrf
@@ -161,20 +156,6 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
-
-    {{-- ── Browse ERP Products ─────────────────────────────────────────────── --}}
-    <h5 class="fw-bold mb-3 mt-2">📦 Product Catalog (M_Product)</h5>
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-transparent fw-semibold d-flex justify-content-between align-items-center">
-            <span>Browse ERP Products (live from iDempiere API)</span>
-            <button class="btn btn-sm btn-outline-secondary" id="loadErpBtn">Load Products</button>
-        </div>
-        <div class="card-body p-0">
-            <div id="erpProductsContainer" class="p-3 text-muted small">
-                Click "Load Products" to fetch the current product list directly from iDempiere.
-            </div>
-        </div>
-    </div>
 
 </div>
 

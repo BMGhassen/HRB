@@ -67,7 +67,6 @@
                     <th class="px-4 py-3 text-left">#</th>
                     <th class="px-4 py-3 text-left">Nom</th>
                     <th class="px-4 py-3 text-left">Email</th>
-                    <th class="px-4 py-3 text-left">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -76,16 +75,6 @@
                     <td class="px-4 py-3">{{ $index+1 }}</td>
                     <td class="px-4 py-3 font-semibold text-white">{{ $v->user->name }}</td>
                     <td class="px-4 py-3">{{ $v->user->email }}</td>
-                    <td class="px-4 py-3">
-                        <div class="flex items-center gap-3">
-                            <a href="#" class="text-blue-400 hover:text-blue-300 transition-colors">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                            <a onclick="return confirm('Voulez-vous vraiment supprimer cet article?')" href="#" class="text-red-400 hover:text-red-300 transition-colors">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </div>
-                    </td>
                 </tr>
                 @endforeach
             </tbody>

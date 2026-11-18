@@ -153,7 +153,6 @@
                     <a href="{{ route('client.article.search') }}" class="text-lion-accent hover:underline flex items-center gap-1.5">
                         <i class="fa-solid fa-layer-group"></i> Tout le Catalogue
                     </a>
-                    <a href="#" class="hover:text-lion-accent">Nouveautés</a>
                 </nav>
             </div>
         </div>

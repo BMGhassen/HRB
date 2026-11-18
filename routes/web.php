@@ -57,12 +57,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/commandes', [CommandeController::class, 'index'])->name('commandes');
     Route::post('/admin/commandes/{commandeId}/renvoyer-erp', [CommandeController::class, 'renvoyerErp'])->name('commandes.renvoyer');
     Route::post('/admin/articles/store', [ArticleController::class, 'store'])->name('articles.store');
-    Route::get('/admin/importcsv2', [ArticleController::class, 'importcsv2'])->name('imparti');
-    Route::get('/admin/importcsv', [ClientController::class, 'importcsv'])->name('impcli');
 
     Route::post('/admin/articles/update', [ArticleController::class, 'update'])->name('articles.update');
     Route::get('/admin/articles/{id}/delete', [ArticleController::class, 'destroy'])->name('articles.delete');
-    Route::post('/admin/articles/majart', [ArticleController::class, 'importCSV'])->name('articles.import');
     Route::get('/admin/equiv', [EquivalentController::class, 'importcsv'])->name('equi.import');
     Route::get('/admin/origin', [OriginController::class, 'importcsv'])->name('origin.import');
     Route::post('/admin/update-sel', [ArticleController::class, 'updateSel'])->name('updateSel');

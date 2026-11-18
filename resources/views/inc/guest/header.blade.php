@@ -137,7 +137,11 @@
                     <a href="{{ route('guest.article.search') }}" class="text-lion-accent hover:underline flex items-center gap-1.5">
                         <i class="fa-solid fa-layer-group"></i> Tout le Catalogue
                     </a>
-                    <a href="#" class="text-amber-400 hover:text-amber-300 font-bold">Devenir client</a>
+                    @guest
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="text-amber-400 hover:text-amber-300 font-bold">Devenir client</a>
+                        @endif
+                    @endguest
                 </nav>
             </div>
         </div>

@@ -98,6 +98,25 @@ class IdempiereProductSyncTest extends TestCase
         $this->assertSame(0, $report['errors']);
     }
 
+    public function test_uses_list_price_when_standard_price_is_zero(): void
+    {
+        // Real iDempiere data: ~11.6k products have PriceStd = 0 and the price only in PriceList
+        $this->fakeErp(
+            products: [$this->product(101, 'REF-A'), $this->product(102, 'REF-B'), $this->product(103, 'REF-C')],
+            prices:   [
+                ['M_Product_ID' => ['id' => 101], 'PriceStd' => 0, 'PriceList' => 33.85],
+                ['M_Product_ID' => ['id' => 102], 'PriceStd' => 12.5, 'PriceList' => 12.5],
+                ['M_Product_ID' => ['id' => 103], 'PriceStd' => 0, 'PriceList' => 0],
+            ],
+        );
+
+        $this->sync();
+
+        $this->assertEqualsWithDelta(33.85, DB::table('articles')->where('ref', 'REF-A')->value('prix'), 0.001);
+        $this->assertEqualsWithDelta(12.5, DB::table('articles')->where('ref', 'REF-B')->value('prix'), 0.001);
+        $this->assertEqualsWithDelta(0, DB::table('articles')->where('ref', 'REF-C')->value('prix'), 0.001);
+    }
+
     public function test_updating_keeps_local_only_fields(): void
     {
         $id = $this->article('REF-A', 101, 10, 1, sel: '1');

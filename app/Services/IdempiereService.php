@@ -300,6 +300,18 @@ class IdempiereService
      * @param  int[]  $productIds
      * @return array<int, float>
      */
+    /**
+     * Selling price of an m_productprice row: PriceStd, or PriceList when PriceStd is 0.
+     * In "Prix de Vente TND", ~11.6k products have PriceStd = 0 with the real price only in
+     * PriceList (for all others both are equal). `PriceStd ?? PriceList` kept the 0.
+     */
+    public static function effectivePrice(array $row): float
+    {
+        $std = (float) ($row['PriceStd'] ?? 0);
+
+        return $std > 0 ? $std : (float) ($row['PriceList'] ?? 0);
+    }
+
     public function getPricesBatch(array $productIds): array
     {
         if (empty($productIds)) {
@@ -323,7 +335,7 @@ class IdempiereService
             foreach ($records as $row) {
                 // Read M_Product_ID.id from JSON object
                 $pid   = $row['M_Product_ID']['id'] ?? null;
-                $price = (float) ($row['PriceStd'] ?? $row['PriceList'] ?? 0);
+                $price = self::effectivePrice($row);
 
                 if ($pid !== null) {
                     $prices[(int)$pid] = $price;

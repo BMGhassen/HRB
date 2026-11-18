@@ -206,7 +206,7 @@ class ErpSyncController extends Controller
             $prices = [];
             foreach ($poolResponses['prices']->json('records') ?? [] as $pRow) {
                 $pid = $pRow['M_Product_ID']['id'] ?? null;
-                if ($pid) $prices[(int)$pid] = (float) ($pRow['PriceStd'] ?? $pRow['PriceList'] ?? 0);
+                if ($pid) $prices[(int)$pid] = \App\Services\IdempiereService::effectivePrice($pRow);
             }
 
             $stocks = [];

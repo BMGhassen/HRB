@@ -103,7 +103,7 @@ class IdempiereProductSync
                 $priceRecords = $poolResponses['prices']->json('records') ?? [];
                 foreach ($priceRecords as $pRow) {
                     $pid = $pRow['M_Product_ID']['id'] ?? null;
-                    if ($pid) $prices[(int)$pid] = (float) ($pRow['PriceStd'] ?? $pRow['PriceList'] ?? 0);
+                    if ($pid) $prices[(int)$pid] = IdempiereService::effectivePrice($pRow);
                 }
 
                 // Parse Parallel Stocks

@@ -40,7 +40,7 @@
                 <span class="hidden md:inline text-zinc-600">|</span>
                 <span class="hidden md:flex items-center gap-1.5">
                     <i class="fa-solid fa-phone text-[#FFC107]"></i>
-                    <span>Service Pro : <strong class="text-white">+216 71 000 000</strong></span>
+                    <span>Service client : <strong class="text-white">+216 71 000 000</strong></span>
                 </span>
             </div>
 
@@ -135,10 +135,10 @@
                         </div>
                     </div>
 
-                    {{-- Pro Cart Button --}}
+                    {{-- Cart Button --}}
                     <button class="relative flex items-center gap-2.5 bg-gradient-to-r from-[#FFC107] to-[#E5A100] text-black font-black px-4 py-2.5 rounded-xl shadow-[0_4px_15px_rgba(255,193,7,0.3)] hover:brightness-110 active:scale-95 transition-all">
                         <i class="fa-solid fa-cart-shopping text-base"></i>
-                        <span class="hidden sm:inline text-xs">Panier Pro</span>
+                        <span class="hidden sm:inline text-xs">Panier</span>
                         <span class="bg-black text-[#FFC107] font-extrabold text-[11px] px-2 py-0.5 rounded-full border border-black/40" x-text="cartCount"></span>
                     </button>
                 </div>
@@ -163,7 +163,7 @@
                     <a href="#" class="hover:text-[#FFC107]">Système de Freinage</a>
                     <a href="#" class="hover:text-[#FFC107]">Filtres & Vidange</a>
                     <a href="#" class="hover:text-[#FFC107]">Refroidissement</a>
-                    <a href="#" class="text-amber-400 hover:text-amber-300 font-bold">🔥 Déstockage Pro (-30%)</a>
+                    <a href="#" class="text-amber-400 hover:text-amber-300 font-bold">🔥 Déstockage (-30%)</a>
                 </nav>
             </div>
         </div>
@@ -213,7 +213,7 @@
                 </h4>
                 <p class="text-xs text-zinc-500 mb-4">Catégorie: Électricité & Allumage</p>
                 <div class="flex items-baseline justify-between pt-3 border-t border-zinc-800">
-                    <span class="text-xs text-zinc-400">Prix Pro HT</span>
+                    <span class="text-xs text-zinc-400">Prix HT</span>
                     <span class="text-xl font-black text-white">18.500 <small class="text-xs text-[#FFC107]">DT</small></span>
                 </div>
             </div>

@@ -2,7 +2,7 @@
 
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
     <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl font-black text-white">Panier Pro</h2>
+        <h2 class="text-2xl font-black text-white">Panier</h2>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-8">
@@ -95,7 +95,7 @@
                             <tr>
                                 <td colspan="5" class="px-6 py-12 text-center text-zinc-500 font-bold">
                                     <i class="fa-solid fa-cart-shopping text-3xl mb-3 block opacity-20"></i>
-                                    Votre panier pro est vide
+                                    Votre panier est vide
                                 </td>
                             </tr>
                         @endif

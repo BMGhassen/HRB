@@ -63,7 +63,7 @@
                 
                 <div class="mt-4">
                     <div class="flex items-baseline justify-between pt-3 border-t border-zinc-800 mb-4">
-                        <span class="text-xs text-zinc-400">Prix Pro HT</span>
+                        <span class="text-xs text-zinc-400">Prix HT</span>
                         <span class="text-xl font-black text-white">{{ $r->getPrice() }} <small class="text-xs text-lion-accent">DT</small></span>
                     </div>
 

@@ -59,7 +59,7 @@
                     @auth
                         {{-- Logged in: /login would just bounce back here, so show the price and open the product --}}
                         <div class="flex items-baseline justify-between pt-3 border-t border-zinc-800 mb-4">
-                            <span class="text-xs text-zinc-400">Prix Pro</span>
+                            <span class="text-xs text-zinc-400">Prix</span>
                             <span class="text-sm font-black text-[#FFC107]">{{ number_format((float) $p->prix, 3, ',', ' ') }} <span class="text-[10px] text-zinc-400">DT HT</span></span>
                         </div>
 
@@ -69,7 +69,7 @@
                     @else
                         {{-- relative z-10: stay clickable above the card-wide product link --}}
                         <div class="flex items-baseline justify-between pt-3 border-t border-zinc-800 mb-4">
-                            <span class="text-xs text-zinc-400">Prix Pro</span>
+                            <span class="text-xs text-zinc-400">Prix</span>
                             <a href="{{ route('login') }}" class="relative z-10 text-xs text-lion-accent font-bold underline hover:text-lion-accent-light">Connectez-vous</a>
                         </div>
 

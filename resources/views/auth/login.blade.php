@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion Espace Pro | Établissement Rekik</title>
+    <title>Connexion Espace Client | Établissement Rekik</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -40,7 +40,7 @@
             <h2 class="text-lg font-bold text-white mb-1 flex items-center gap-2">
                 <i class="fa-solid fa-lock text-lion-accent"></i> Connexion Espace Client
             </h2>
-            <p class="text-xs text-zinc-400 mb-6">Accédez à votre compte pro, tarifs négociés et stock direct ERP.</p>
+            <p class="text-xs text-zinc-400 mb-6">Accédez à votre compte, tarifs négociés et stock direct ERP.</p>
 
             {{-- Validation Errors --}}
             @if ($errors->any())
@@ -105,7 +105,7 @@
                 <div class="pt-2">
                     <button type="submit" 
                             class="w-full py-3.5 px-4 bg-gradient-to-r from-[#FFC107] to-[#E5A100] text-black font-black rounded-xl text-sm shadow-[0_4px_20px_rgba(255,193,7,0.35)] hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                        <span>Se Connecter à l'Espace Pro</span>
+                        <span>Se connecter à l'Espace Client</span>
                         <i class="fa-solid fa-arrow-right text-xs"></i>
                     </button>
                 </div>
@@ -116,7 +116,7 @@
                 <div class="mt-6 pt-5 border-t border-zinc-800/80 text-center text-xs text-zinc-400">
                     Vous êtes garagiste ou revendeur ? 
                     <a href="{{ route('register') }}" class="font-bold text-lion-accent hover:underline ml-1">
-                        Créer un compte pro
+                        Créer un compte
                     </a>
                 </div>
             @endif

@@ -24,7 +24,7 @@
                 <span class="hidden md:inline text-zinc-600">|</span>
                 <span class="hidden md:flex items-center gap-1.5">
                     <i class="fa-solid fa-phone text-lion-accent"></i>
-                    <span>Service Pro : <strong class="text-white">+216 71 000 000</strong></span>
+                    <span>Service client : <strong class="text-white">+216 71 000 000</strong></span>
                 </span>
             </div>
 
@@ -116,7 +116,7 @@
                     </div>
                     @endauth
 
-                    {{-- Pro Cart Button --}}
+                    {{-- Cart Button --}}
                     <a href="{{ route('client.panier') }}" class="relative flex items-center gap-2.5 bg-gradient-to-r from-[#FFC107] to-[#E5A100] text-black font-black px-4 py-2.5 rounded-xl shadow-[0_4px_15px_rgba(255,193,7,0.3)] hover:brightness-110 active:scale-95 transition-all">
                         <i class="fa-solid fa-cart-shopping text-base"></i>
                         <span class="hidden sm:inline text-xs">Panier</span>
